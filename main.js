@@ -12,7 +12,7 @@ app.listen(1000);
 console.log('Express')
 const { Document, Module, ModuleDocument, Roles, AssigneByPermissions, newUser } = require('./model.js');
 const Custmer = require('./custer.js')
-//const url = 'mongodb://127.0.0.1:27017/projects' //testing ,projects
+// const url = 'mongodb://127.0.0.1:27017/projects' //testing ,projects
 const url ='mongodb+srv://tapaswigangavarapu:05RJCCwPP5nq1YMv@cluster0.spvxgrd.mongodb.net/parma?retryWrites=true&w=majority'
 const dbName = "test";
 const currentDate = new Date();
@@ -67,7 +67,9 @@ app.post('/userLogin', async (req, res) => {
 
 // Verify and decode a JWT token
 
-
+app.get('/tet',(req,res)=>{
+    res.json({'oj':'ok'})
+})
 
 app.get('/', (req, res) => {
     // res.json({ data: currentDate });

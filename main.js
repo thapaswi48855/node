@@ -105,7 +105,9 @@ const { taxGroup, taxSubGroup } = require('./tax.js')
 app.get('/documents', async (req, res) => {
     // res.json({ 'oj': 'ok' })
     // res.json({ 'oj': req })
+    console.log('1')
     try {
+        console.log('2')
         // res.json({ 'oj1': 'ok' })
         // res.json({ 'oj1': req })
         // Assuming you have a "Teacher" model defined in your './model.js' file
@@ -113,21 +115,22 @@ app.get('/documents', async (req, res) => {
         // res.json({ 'oj2': 'ok' })
         // res.json({ 'oj2': req })
         if (req.query) {
-            
+            console.log('3')
         
-             res.json({ 'oj3': 'ok' })
+            //  res.json({ 'oj3': 'ok' })
             // res.json({ 'oj3': req })
             const documents =await Document.find(req.query);
             console.log('documents', documents)
             
         
-            // res.json({ data: documents });
+            res.json({ data: documents });
         } else {
             // res.json({ 'oj4': 'ok' })
             // res.json({ 'oj4': req })
+            console.log('4')
             const documents = await Document.find();
-            // res.json({ data: documents });
-            res.json({ 'oj4': 'ok' })
+            res.json({ data: documents });
+            // res.json({ 'oj4': 'ok' })
         }
 
     } catch (error) {

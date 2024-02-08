@@ -113,16 +113,21 @@ app.get('/documents', async (req, res) => {
         // res.json({ 'oj2': 'ok' })
         // res.json({ 'oj2': req })
         if (req.query) {
-            res.json({ 'oj3': 'ok' })
-            res.json({ 'oj3': req })
+            
+        
+             res.json({ 'oj3': 'ok' })
+            // res.json({ 'oj3': req })
             const documents =await Document.find(req.query);
             console.log('documents', documents)
-            res.json({ data: documents });
+            
+        
+            // res.json({ data: documents });
         } else {
             // res.json({ 'oj4': 'ok' })
             // res.json({ 'oj4': req })
             const documents = await Document.find();
-            res.json({ data: documents });
+            // res.json({ data: documents });
+            res.json({ 'oj4': 'ok' })
         }
 
     } catch (error) {

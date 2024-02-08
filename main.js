@@ -105,7 +105,7 @@ const { taxGroup, taxSubGroup } = require('./tax.js')
 app.get('/documents', async (req, res) => {
     // res.json({ 'oj1': 'ok' })
     try {
-        res.json({ 'oj2': 'ok' })
+        // res.json({ 'oj2': 'ok' })
         // Assuming you have a "Teacher" model defined in your './model.js' file
         // const Document = require('./model.js').Document;
 
@@ -116,8 +116,8 @@ app.get('/documents', async (req, res) => {
         //     res.json({ data: documents });
         // } else {
            
-        //     const documents = await Document.find();
-        //     res.json({ data: documents });
+            const documents = await Document.find();
+            res.json({ data: documents });
         // }
 
     } catch (error) {

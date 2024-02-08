@@ -103,25 +103,24 @@ const { taxGroup, taxSubGroup } = require('./tax.js')
 /* Documents GET & INSERT & UPDate */
 
 app.get('/documents', async (req, res) => {
-    res.json({ 'oj': 'ok' })
-    res.json({ 'oj': req })
+    // res.json({ 'oj': 'ok' })
+    // res.json({ 'oj': req })
     try {
-        res.json({ 'oj1': 'ok' })
-        res.json({ 'oj1': req })
+        // res.json({ 'oj1': 'ok' })
+        // res.json({ 'oj1': req })
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const Document = require('./model.js').Document;
-        res.json({ 'oj2': 'ok' })
-        res.json({ 'oj2': req })
+        // res.json({ 'oj2': 'ok' })
+        // res.json({ 'oj2': req })
         if (req.query) {
-            const documents =
-                res.json({ 'oj3': 'ok' })
+            res.json({ 'oj3': 'ok' })
             res.json({ 'oj3': req })
-            await Document.find(req.query);
+            const documents =await Document.find(req.query);
             console.log('documents', documents)
             res.json({ data: documents });
         } else {
-            res.json({ 'oj4': 'ok' })
-            res.json({ 'oj4': req })
+            // res.json({ 'oj4': 'ok' })
+            // res.json({ 'oj4': req })
             const documents = await Document.find();
             res.json({ data: documents });
         }

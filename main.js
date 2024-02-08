@@ -117,7 +117,8 @@ app.get('/documents', async (req, res) => {
         // } else {
            
             const documents = await Document.find();
-            res.json({ data: documents });
+            res.json({ 'oj2': 'ok' })
+            // res.json({ data: documents });
         // }
 
     } catch (error) {

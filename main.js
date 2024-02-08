@@ -103,40 +103,28 @@ const { taxGroup, taxSubGroup } = require('./tax.js')
 /* Documents GET & INSERT & UPDate */
 
 app.get('/documents', async (req, res) => {
-    // res.json({ 'oj': 'ok' })
-    // res.json({ 'oj': req })
-    console.log('1')
+    res.json({ 'oj1': 'ok' })
     try {
-        console.log('2')
-        // res.json({ 'oj1': 'ok' })
-        // res.json({ 'oj1': req })
+        res.json({ 'oj2': 'ok' })
         // Assuming you have a "Teacher" model defined in your './model.js' file
-        const Document = require('./model.js').Document;
-        // res.json({ 'oj2': 'ok' })
-        // res.json({ 'oj2': req })
-        if (req.query) {
-            console.log('3')
-        
-            //  res.json({ 'oj3': 'ok' })
-            // res.json({ 'oj3': req })
-            const documents =await Document.find(req.query);
-            console.log('documents', documents)
-            
-        
-            res.json({ data: documents });
-        } else {
-            // res.json({ 'oj4': 'ok' })
-            // res.json({ 'oj4': req })
-            console.log('4')
-            const documents = await Document.find();
-            res.json({ data: documents });
-            // res.json({ 'oj4': 'ok' })
-        }
+        // const Document = require('./model.js').Document;
+
+        // if (req.query) {
+
+        //     const documents =await Document.find(req.query);
+        //     console.log('documents', documents)           
+        //     res.json({ data: documents });
+        // } else {
+           
+        //     const documents = await Document.find();
+        //     res.json({ data: documents });
+        // }
 
     } catch (error) {
+        res.json({ 'oj3': 'ok' })
         // Handle any errors that may occur during the database query
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        // console.error(error);
+        // res.status(500).json({ error: 'Internal Server Error' });
     }
 })
 

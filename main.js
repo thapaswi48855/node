@@ -101,14 +101,14 @@ const { serviceGroup, serviceSubGroup } = require('./service.js');
 const { taxGroup, taxSubGroup } = require('./tax.js')
 
 /* Documents GET & INSERT & UPDate */
+const Document = require('./model.js').Document;
 
 app.get('/documents', async (req, res) => {
     // res.json({ 'oj1': 'ok' })
     try {
         // res.json({ 'oj2': 'ok' })
         // Assuming you have a "Teacher" model defined in your './model.js' file
-        const Document = require('./model.js').Document;
-
+        
         // if (req.query) {
 
         //     const documents =await Document.find(req.query);
@@ -117,8 +117,8 @@ app.get('/documents', async (req, res) => {
         // } else {
            
             const documents = await Document.find();
-            res.json({ 'oj2': 'ok' })
-            // res.json({ data: documents });
+            // res.json({ 'oj2': 'ok' })
+            res.json({ data: documents });
         // }
 
     } catch (error) {

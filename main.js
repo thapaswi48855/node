@@ -13,7 +13,7 @@ console.log('Express')
 const { Document, Module, ModuleDocument, Roles, AssigneByPermissions, newUser } = require('./model.js');
 const Custmer = require('./custer.js')
 // const url = 'mongodb://127.0.0.1:27017/projects' //testing ,projects
-const url ='mongodb+srv://tapaswigangavarapu:05RJCCwPP5nq1YMv@cluster0.spvxgrd.mongodb.net/parma?retryWrites=true&w=majority'
+const url = 'mongodb+srv://tapaswigangavarapu:05RJCCwPP5nq1YMv@cluster0.spvxgrd.mongodb.net/parma?retryWrites=true&w=majority'
 const dbName = "test";
 const currentDate = new Date();
 const jwt = require('jsonwebtoken');
@@ -67,8 +67,8 @@ app.post('/userLogin', async (req, res) => {
 
 // Verify and decode a JWT token
 
-app.get('/tet',(req,res)=>{
-    res.json({'oj':'ok'})
+app.get('/tet', (req, res) => {
+    res.json({ 'oj': 'ok' })
 })
 
 app.get('/', (req, res) => {
@@ -103,16 +103,25 @@ const { taxGroup, taxSubGroup } = require('./tax.js')
 /* Documents GET & INSERT & UPDate */
 
 app.get('/documents', async (req, res) => {
-
+    res.json({ 'oj': 'ok' })
+    res.json({ 'oj': req })
     try {
+        res.json({ 'oj1': 'ok' })
+        res.json({ 'oj1': req })
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const Document = require('./model.js').Document;
-
+        res.json({ 'oj2': 'ok' })
+        res.json({ 'oj2': req })
         if (req.query) {
-            const documents = await Document.find(req.query);
+            const documents =
+                res.json({ 'oj3': 'ok' })
+            res.json({ 'oj3': req })
+            await Document.find(req.query);
             console.log('documents', documents)
             res.json({ data: documents });
         } else {
+            res.json({ 'oj4': 'ok' })
+            res.json({ 'oj4': req })
             const documents = await Document.find();
             res.json({ data: documents });
         }
@@ -1339,30 +1348,30 @@ app.get('/getNewItem', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    if(sObject['serviceGroup'] != undefined){
-                    const matchStore = servicegroup.find(obj => obj._id.toString() === sObject['serviceGroup'].toString());
-                    if (matchStore) {
-                        sObject['serviceGroup'] = matchStore.servicegroupname;
-                    }                    
-                } 
-                if(sObject['serviceSubGroup'] != undefined){
-                    const matchStore = serviceSubGroup.find(obj => obj._id.toString() === sObject['serviceSubGroup'].toString());
-                    if (matchStore) {
-                        sObject['serviceSubGroup'] = matchStore.servicesubgroupname;
-                    }                    
-                } 
-                if(sObject['category'] != undefined){
-                    const matchStore = itemCategory.find(obj => obj._id.toString() === sObject['category'].toString());
-                    if (matchStore) {
-                        sObject['category'] = matchStore.categoryName;
-                    }                    
-                } 
-                if(sObject['packageUOM'] != undefined){
-                    const matchStore = uomcreation.find(obj => obj._id.toString() === sObject['packageUOM'].toString());
-                    if (matchStore) {
-                        sObject['packageUOM'] = matchStore.packageUom;
-                    }                    
-                } 
+                    if (sObject['serviceGroup'] != undefined) {
+                        const matchStore = servicegroup.find(obj => obj._id.toString() === sObject['serviceGroup'].toString());
+                        if (matchStore) {
+                            sObject['serviceGroup'] = matchStore.servicegroupname;
+                        }
+                    }
+                    if (sObject['serviceSubGroup'] != undefined) {
+                        const matchStore = serviceSubGroup.find(obj => obj._id.toString() === sObject['serviceSubGroup'].toString());
+                        if (matchStore) {
+                            sObject['serviceSubGroup'] = matchStore.servicesubgroupname;
+                        }
+                    }
+                    if (sObject['category'] != undefined) {
+                        const matchStore = itemCategory.find(obj => obj._id.toString() === sObject['category'].toString());
+                        if (matchStore) {
+                            sObject['category'] = matchStore.categoryName;
+                        }
+                    }
+                    if (sObject['packageUOM'] != undefined) {
+                        const matchStore = uomcreation.find(obj => obj._id.toString() === sObject['packageUOM'].toString());
+                        if (matchStore) {
+                            sObject['packageUOM'] = matchStore.packageUom;
+                        }
+                    }
                     if (matchingObject) {
                         sObject[status] = matchingObject.subMasterName
                     }
@@ -1437,7 +1446,7 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
             // const storeKeys = ['supplierapplyTCSforPOStockEntry', 'status', 'registeredsupplier', 'supplierCategory'];
 
             const result = rasiePurchaseOrder.map(sObject => {
-                const storeKeys = ['store','approvalStatus'];
+                const storeKeys = ['store', 'approvalStatus'];
                 const mergedObject = { ...sObject.toObject() };
 
                 _.forEach(storeKeys, (status) => {
@@ -1534,7 +1543,7 @@ app.get('/getStockEntryMaster', async (req, res) => {
             // const storeKeys = ['supplierapplyTCSforPOStockEntry', 'status', 'registeredsupplier', 'supplierCategory'];
 
             const result = stockEntry.map(sObject => {
-                const storeKeys = ['store', 'poNumber','approvalStatus'];
+                const storeKeys = ['store', 'poNumber', 'approvalStatus'];
                 const mergedObject = { ...sObject.toObject() };
 
                 _.forEach(storeKeys, (status) => {
@@ -1860,7 +1869,7 @@ async function onCommonPost(req, res, tableName) {
             const id = req.body[0]._id
             delete req.body[0]._id
             req.body[0].modifydt = new Date();
-            req.body[0].codeGen =on
+            req.body[0].codeGen = on
             await tableName.updateOne({ _id: { $eq: id } }, {
                 $set: req.body[0]
             });

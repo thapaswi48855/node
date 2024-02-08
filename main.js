@@ -107,7 +107,7 @@ app.get('/documents', async (req, res) => {
     try {
         // res.json({ 'oj2': 'ok' })
         // Assuming you have a "Teacher" model defined in your './model.js' file
-        // const Document = require('./model.js').Document;
+        const Document = require('./model.js').Document;
 
         // if (req.query) {
 

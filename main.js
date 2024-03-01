@@ -13,7 +13,7 @@ console.log('Express')
 const { Document, Module, ModuleDocument, Roles, AssigneByPermissions, newUser } = require('./model.js');
 const Custmer = require('./custer.js')
 // const url = 'mongodb://127.0.0.1:27017/projects' //testing ,projects
-const url = 'mongodb+srv://tapaswigangavarapu:05RJCCwPP5nq1YMv@cluster0.spvxgrd.mongodb.net/projects?retryWrites=true&w=majority'
+const url = 'mongodb+srv://tapaswigangavarapu:05RJCCwPP5nq1YMv@cluster0.spvxgrd.mongodb.net/pharmacy?retryWrites=true&w=majority'
 const dbName = "test";
 const currentDate = new Date();
 const jwt = require('jsonwebtoken');
@@ -25,16 +25,18 @@ const newUuid = uuidv4();
 //     userId: 123,
 //     username: 'exampleuser',
 //   };
-function connection() {
-    const conMongo = mongoose.connect(url,
+async function connection() {
+    await mongoose.connect(url,
         {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            minPoolSize: 6,
+            maxPoolSize: 14
         },
 
     );
 }
-connection();
+ connection();
 // Generate a JWT token
 
 app.post('/userLogin', async (req, res) => {
@@ -106,25 +108,26 @@ const { taxGroup, taxSubGroup } = require('./tax.js')
 app.get('/documents', async (req, res) => {
     // res.json({ 'oj1': 'ok' })
     try {
+        // console.log('documents', await Document.find({}))  
         // res.json({ 'oj2': 'ok' })
         // Assuming you have a "Teacher" model defined in your './model.js' file
-        const Document = require('./model.js').Document;
+
         // if (req.query) {
 
         //     const documents =await Document.find(req.query);
         //     console.log('documents', documents)           
         //     res.json({ data: documents });
         // } else {
-           
-            const documents = await Document.find();
-            // res.json({ 'oj2': 'ok' })
-            res.json({ data: documents });
+        // console.log(await Document.find({}));
+        const documents = await Document.find({});
+        // // res.json({ 'oj2': 'ok' })
+        res.json({ data: documents });
         // }
 
     } catch (error) {
-        res.json({ 'oj3': 'ok' })
+        // res.json({ 'oj3': 'ok' })
         // Handle any errors that may occur during the database query
-        // console.error(error);
+        console.error(error);
         // res.status(500).json({ error: 'Internal Server Error' });
     }
 })

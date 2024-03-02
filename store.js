@@ -66,7 +66,7 @@ const addItemCategorySchema = new mongoose.Schema({
     bilable:String,
     retilable:String,
     calmiable:String,
-    validateExpireDate:Date,
+    validateExpireDate:String,
     discount:String,
     prescribable:String,
     assestsTracking:String,

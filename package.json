@@ -20,6 +20,8 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^7.5.3",
+    "pdf-creator-node": "^2.3.5",
+    "pdfkit": "^0.14.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

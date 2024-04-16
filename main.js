@@ -8,7 +8,7 @@ app.use(bp.json());
 const cors = require("cors");
 app.use(cors())
 const mongoose = require('mongoose');
-app.listen(1000);
+
 console.log('Express')
 const { Document, Module, ModuleDocument, Roles, AssigneByPermissions, newUser } = require('./model.js');
 const Custmer = require('./custer.js')
@@ -36,7 +36,7 @@ async function connection() {
 
     );
 }
- connection();
+connection();
 // Generate a JWT token
 
 app.post('/userLogin', async (req, res) => {
@@ -106,6 +106,7 @@ const { taxGroup, taxSubGroup } = require('./tax.js')
 
 
 app.get('/documents', async (req, res) => {
+    console.log('doc')
     // res.json({ 'oj1': 'ok' })
     try {
         // console.log('documents', await Document.find({}))  
@@ -1928,6 +1929,570 @@ async function onCommonJoinGet(res, maintable, columnsList, table1, table2, tabl
     res.json({ data: maintable });
 }
 
+app.get('/getpdf', async (req, res) => {
+    onGeneratePdf()
+})
+
+async function onGeneratePdf() {
+
+
+    // const PDFDocument = require('pdfkit');
+    // const fs = require('fs');
+
+    // // Create anew PDF document
+    // const doc = new PDFDocument();
+
+    // // Pipe the PDF into a writable stream (in this case, a file stream)
+    // const writeStream = fs.createWriteStream('sample.pdf');
+    // doc.pipe(writeStream);
+
+    // const aaa = {
+    //     companyName: 'Suvarna',
+    //     id: 272,
+    //     salary: '2k'
+    // };
+
+    // // Calculate the middle value of the page
+    // const middle = doc.page.width / 2;
+    // const cellWidth = (middle - 150) / 2;
+    // const cellHeight = 20;
+
+    // // Add content to the PDF
+    // doc.fontSize(20).text('Sample PDF Document', { align: 'center' });
+    // doc.moveDown();
+
+    // // Create two sections on a single page
+    // doc.rect(0, 0, middle, doc.page.height); // Left half
+    // doc.rect(middle, 0, middle, doc.page.height); // Right half
+
+    // const properties = Object.keys(aaa);
+    // const startZ = 100;
+    // const lineHeight = 10;
+    // const spacing = 10;
+
+    // properties.forEach((property, index) => {
+    //     doc.fontSize(12)
+    //         .text(`${property}: ${aaa[property]}`, 100 + (index < properties.length / 2 ? 0 : middle), startZ + (index % (properties.length / 2)) * (lineHeight + spacing), { align: 'left', width: middle - 100 });
+    // console.log(`${property}: ${aaa[property]}`)
+    //     });
+
+
+    // // Calculate the position for the table
+    // const tableStartY = startZ + Math.ceil(properties.length / 2) * (lineHeight + spacing) + 50; // 50 is padding
+
+    // const data = [
+    //     { id: 1, name: 'John', salary: 2000 },
+    //     { id: 2, name: 'Jane', salary: 2500 }
+    // ];
+
+    // // Set up table parameters
+    // const startX = 50;
+    // const startY = tableStartY; //tableStartY
+    // const rowHeight = 30;
+    // const colWidth = 150;
+    // const borderWidth = 1;
+
+    // // Header row
+    // doc.font('Helvetica').fontSize(12);
+    // doc.text('ID', startX, startY).text('Name', startX + colWidth, startY).text('Salary', startX + 2 * colWidth, startY);
+
+    // // Draw horizontal lines
+    // for (let i = 0; i <= data.length; i++) {
+    //     doc.moveTo(startX, startY + (i + 1) * rowHeight)
+    //         .lineTo(startX + 3 * colWidth, startY + (i + 1) * rowHeight)
+    //         .lineWidth(borderWidth)
+    //         .stroke();
+    // }
+
+    // // Draw vertical lines
+    // doc.moveTo(startX + colWidth, startY).lineTo(startX + colWidth, startY + (data.length + 1) * rowHeight).stroke();
+    // doc.moveTo(startX + 2 * colWidth, startY).lineTo(startX + 2 * colWidth, startY + (data.length + 1) * rowHeight).stroke();
+
+    // // Populate data
+    // data.forEach((entry, index) => {
+    //     const rowY = startY + (index + 1) * rowHeight;
+    //     doc.text(entry.id.toString(), startX, rowY)
+    //         .text(entry.name, startX + colWidth, rowY)
+    //         .text(entry.salary.toString(), startX + 2 * colWidth, rowY);
+    // });
+    // doc.end();
+
+    const PDFDocument = require('pdfkit');
+    const fs = require('fs');
+
+    // Create a new PDFDocument
+    const doc = new PDFDocument();
+
+    // Pipe the PDF content to a file
+    doc.pipe(fs.createWriteStream('table.pdf'));
+
+    // Add content to the PDF
+    // doc.fontSize(20).text('Sample PDF Document', { align: 'center' });
+    doc.font('Helvetica-Bold').fontSize(8).text('Purchase Order', { align: 'center' });
+    doc.moveDown();
+    // doc.fontSize(8)
+    const aaa = {
+        'Hospital GSTIN No': '36AABCU6403H1ZH',
+        'Indent Process No': '',
+        'Auth/Amnd Dt': '02-01-2024 10:56',
+        'PO No': 'POCS2023000002',
+        'Supplier Address': 'HIMALAYAPHARMA GROUND FLOORGHORI NAGAR COLON LOD BOWENPALLY SECUGHORI NAGAR COLON LOD BOWENPALLY SECU SECUNDERABAD TELANGANA India HIMALAYAPHARMA GROUND FLOORGHORI NAGAR COLON LOD BOWENPALLY SECUGHORI NAGAR COLON LOD BOWENPALLY SECU SECUNDERABAD TELANGANA India HIMALAYAPHARMA GROUND FLOORGHORI NAGAR COLON LOD BOWENPALLY',
+        'Store Name': 'CENTRAL STORE',
+        'Dept. Name': 'Anaesthesiology',
+        'Credit Period': '0.00',
+        'Delivery Date': '',
+        'PO Date': '02-jan-24',
+        'Delivery At': 'OMNI KUKATPALLY HOSPITAL No-20,21,22A,22B,22C,23&24 Balaji Nagar, Kukatpally,Hyderabad-500072, Telangana.'
+    };
+
+    // Calculate the middle value of the page
+    const middle = doc.page.width / 2;
+    const cellWidth = (middle - 150) / 2;
+    const cellHeight = 20;
 
 
 
+    // Create two sections on a single page
+    // doc.rect(0, 0, middle, doc.page.height); // Left half
+    //  doc.rect(middle, 0, middle, doc.page.height); // Right half
+
+    const objproperties = Object.keys(aaa);
+    const startZ = 100;
+    let accumulatedHeight = startZ;
+    let accumulatedHeight1 = startZ;
+    const lineHeight = 10;
+    const spacing = 10;
+    const halfLength = Math.ceil(objproperties.length / 2);
+    //   console.log('accumulatedHeight', accumulatedHeight)
+    //     console.log('accumulatedHeight1', accumulatedHeight1)
+    objproperties.forEach((property, index) => {
+
+        const textWidth = doc.widthOfString(property) + doc.widthOfString(aaa[property]);
+        const lineHeight1 = Math.ceil(textWidth / (middle - 50));
+        // let accumulatedHeight =(index < halfLength ? accumulatedHeight + 10 : startZ );
+        console.log('textWidth', textWidth)
+        console.log('lineHeight1', lineHeight1)
+        const xPos = (index < 6 ? 50 : middle);
+        const zPos = (index < 6 ? accumulatedHeight + 10 : accumulatedHeight1 + 10)
+
+        // doc.font('Helvetica').fontSize(8)
+        //     .text(`${property}: ${aaa[property]}`, xPos, zPos, { align: 'left', width: middle - 50 })
+
+        doc.moveTo(200, 200)       // this is your starting position of the line, from the left side of the screen 200 and from top 200
+            // .lineTo(400, 200)       // this is the end point the line 
+            .dash(5, { space: 10 }) // here we are formatting it to dash
+            .text(`${property}: ${aaa[property]}`, xPos, zPos, { align: 'left', width: middle - 50 }) // the text and the position where the it should come
+        doc.moveTo(500, 200)   //again we are giving a starting position for the text
+            // .lineTo(800, 200)       //end point
+            .dash(5, { space: 10 })   //adding dash
+            .stroke()
+
+        accumulatedHeight = (index < halfLength ? accumulatedHeight += lineHeight1 * 10 : accumulatedHeight1 += lineHeight1 * 10)
+
+    });
+    // for (const [key, value] of Object.entries(aaa)) {
+    //     // Print key-value pair
+    //     doc
+    //         .font('Helvetica-Bold')
+    //         .fontSize(12)
+    //         // .text(`${key}:`, { continued: true })
+    //         .font('Helvetica')
+    //         .text(`${key}: ${value}`, middle, { align: 'left' })
+    //         .moveDown();
+    // }
+
+    // for (const [key, value] of Object.entries(aaa)) {
+    //     doc.text(`${key}: ${value}`, middle, { align: 'left' });
+    //     doc.moveDown(0.5);
+    // }
+
+    // doc.on('pageAdded', () => {
+    //     const middle = doc.page.width / 2;
+
+    //     for (const [key, value] of Object.entries(aaa)) {
+    //         doc.text(`${key}: ${value}`, middle, { align: 'left' });
+    //         doc.moveDown(0.5);
+    //     }
+
+    //     doc.end();
+    // });
+
+    // doc.addPage();
+
+    // const objproperties = Object.keys(aaa);
+    // const startZ = 100;
+    // const lineHeight = 10;
+    // let yPos = startZ;
+
+    // objproperties.forEach((property, index) => {
+    //     const xPos = 50 + (index < objproperties.length / 2 ? 0 : middle);
+
+    //     // Print the property and value
+    //     doc.font('Helvetica').fontSize(9)
+    //         .text(`${property}: ${aaa[property]}`, xPos, yPos, { align: 'left', width: middle - 50 });
+
+    //     // Move the vertical position down
+    //     yPos += lineHeight;
+
+    //     // If the current property is 'Supplier Address', calculate its height and adjust the vertical position for the next property
+    //     // if (property === 'Supplier Address') {
+    //     //     const addressLines = doc.widthOfString(`${aaa[property]}`, { width: middle - 50 });
+    //     //     // yPos += addressLines;
+    //     // }
+    // });
+
+
+    // objproperties.forEach((property, index) => {
+    //     const xPos = 100 + (index < objproperties.length / 2 ? 0 : middle);
+    //     let yPos = startZ + (index % (objproperties.length / 2)) * (lineHeight + spacing);
+
+    //     // If the current property is 'Store Name' and it follows 'Supplier Address', add extra spacing
+    //     if (property === 'Store Name' && objproperties.indexOf('Supplier Address') !== -1 && objproperties.indexOf('Store Name') > objproperties.indexOf('Supplier Address')) {
+    //         yPos += lineHeight + spacing;
+    //     }
+
+    //     doc.font('Helvetica').fontSize(9)
+    //         .text(`${property}: ${aaa[property]}`, xPos, yPos, { align: 'left', width: middle - 100 });
+    // });
+
+
+    // Calculate the position for the table
+    const tableStartY = startZ + Math.ceil(objproperties.length / 2) * (lineHeight + spacing) + 30; // 50 is padding
+    console.log('tableStartY', tableStartY)
+
+    const data = [
+        { 'Sl No.': 1, 'Item Name': 'DOLOFAN InJ', 'HSN CODE': '', 'MFR': 'GEN', 'QTY': 1.00, 'RATE': 11.00, 'DISC': 1.00, 'TAX%': 12.00, 'CGST': 0.60, 'SGST': 0.60, 'IGST': 0.00, 'Amount': 11.20 },
+        { 'Sl No.': 2, 'Item Name': 'DOLOPAR TAB', 'HSN CODE': '', 'MFR': 'GEN', 'QTY': 1.00, 'RATE': 11.00, 'DISC': 1.00, 'TAX%': 12.00, 'CGST': 0.60, 'SGST': 0.60, 'IGST': 0.00, 'Amount': 11.20 },
+
+    ];
+
+
+    // Set up table parameters
+    const startX = 50;
+    const tableEndX = 550; // End position of the table
+    const startY = tableStartY; // Start drawing the table from startY
+    const rowHeight = 30;
+    const properties = Object.keys(data[0]);
+    console.log(properties.length)
+    //const colWidth = doc.page.width / properties.length ; //100
+    const colWidth = (tableEndX - startX) / properties.length;
+    console.log(doc.page.width)
+    console.log(colWidth)
+    const borderWidth = 1;
+
+    // Define initial position
+    let x = 50;
+    let y = 50;
+
+    // Header row
+    // doc.font('Helvetica').fontSize(12);
+    // doc.text('ID', startX, startY).text('Name', startX + colWidth, startY).text('Salary', startX + 2 * colWidth, startY).text('place', startX + 3 * colWidth, startY);
+    doc.font('Helvetica-Bold').fontSize(9);
+    Object.keys(data[0]).forEach((header, index) => {
+        console.log('colWidth', colWidth)
+        const x = startX + index * colWidth + colWidth / 2 - doc.widthOfString(header) / 2;
+        console.log('x', x)
+        doc.text(header, x, startY, {
+            width: colWidth - borderWidth,
+            align: 'center'
+        });
+    });
+
+
+    // Draw horizontal lines
+    for (let i = -1; i <= data.length; i++) {
+        doc.moveTo(startX, startY + (i + 1) * rowHeight)
+            .lineTo(startX + 12 * colWidth, startY + (i + 1) * rowHeight)
+            .lineWidth(1)
+            .stroke();
+    }
+
+    // Draw vertical lines
+    for (let i = 0; i <= Object.keys(data[0]).length; i++) {
+        doc.moveTo(startX + i * colWidth, startY)
+            .lineTo(startX + i * colWidth, startY + 3 * rowHeight)
+            .lineWidth(1)
+            .stroke();
+    }
+
+
+    // Populate data
+    doc.font('Helvetica').fontSize(8);
+    data.forEach((entry, rowIndex) => {
+        Object.keys(entry).forEach((key, colIndex) => {
+            const value = entry[key].toString();
+            const x = startX + colIndex * colWidth + colWidth / 2 - doc.widthOfString(value) / 2;
+            const y = startY + (rowIndex + 1) * rowHeight + rowHeight / 2 - doc.currentLineHeight() / 2;
+            doc.text(value, x, y, {
+                width: colWidth - borderWidth,
+                align: 'center'
+            });
+            // wrapText(value, x, y, colWidth, lineHeight)
+        });
+    });
+
+
+    // Company name
+    // const companyNameY = startY + (data.length + 1) * rowHeight + 20;
+    // const companyNameX = startX + colWidth; // Aligning with the table
+    // doc.fontSize(12).text('Company Name: Suvarna', companyNameX, companyNameY, { align: 'center' });
+
+
+    const aaa1 = {
+        companyName: 'Suvarna',
+        id: 272,
+        salary: '2k',
+        place: 'Nellore',
+        DOb: '25-july-1996'
+    };
+    // Set up table parameters
+    const startX1 = 50;
+    const startY1 = 50;
+    const rowHeight1 = 30;
+    const colWidth1 = 150;
+    const borderWidth1 = 1;
+
+    // Add content to the PDF
+    doc.font('Helvetica').fontSize(12);
+
+    // Populate data
+    const keys = Object.keys(aaa1);
+    const values = Object.values(aaa1);
+    const numCols = 3; // Number of columns for each row
+    const numRows = Math.ceil(keys.length / numCols); // Calculate number of rows
+
+    for (let row = 0; row < numRows; row++) {
+        for (let col = 0; col < numCols; col++) {
+            const index = row * numCols + col;
+            if (index < keys.length) {
+                const x = startX1 + col * colWidth1;
+                const y = (startY + (data.length + 1) * rowHeight + 20) + startY1 + row * rowHeight1; //startY1 + row * rowHeight1;
+                doc.text(`${keys[index]}: ${values[index]}`, x, y, { width: colWidth1, align: 'left' });
+            }
+        }
+    }
+    doc.moveDown();
+    // const companyNameY = startY + (data.length + 1) * rowHeight + 20;
+    // const companyNameX = startX + colWidth; // Aligning with the table
+
+    // Finalize PDF
+    doc.end();
+
+    console.log('PDF generated successfully.');
+}
+
+// Function to wrap text
+function wrapText(text, x, y, maxWidth, lineHeight) {
+    let words = text.split(' ');
+    let line = '';
+
+    for (let i = 0; i < words.length; i++) {
+        let testLine = line + words[i] + ' ';
+        console.log('testLine', testLine)
+        let testWidth = doc.widthOfString(testLine);
+        if (testWidth > maxWidth && i > 0) {
+            doc.text(line, x, y);
+            line = words[i] + ' ';
+            y += lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    doc.text(line, x, y);
+}
+
+
+app.get('/getsamplepdf', async (req, res) => {
+    onGenerateSmplePdf()
+})
+
+async function onGenerateSmplePdf() {
+    const PDFDocument = require('pdfkit');
+    const fs = require('fs');
+
+    const aaa = {
+        'Hospital GSTIN No': '36AABCU6403H1ZH',
+        'Indent Process No': '',
+        'Auth/Amnd Dt': '02-01-2024 10:56',
+        'PO No': 'POCS2023000002',
+        'Supplier Address': 'HIMALAYAPHARMA GROUND FLOORGHORI NAGAR COLON LOD BOWENPALLY SECUGHORI NAGAR COLON LOD BOWENPALLY SECU SECUNDERABAD TELANGANA India',
+        'Store Name': 'CENTRAL STORE',
+        'Dept. Name': 'Anaesthesiology',
+        'Credit Period': '0.00',
+        'Delivery Date': '',
+        'PO Date': '02-jan-24',
+        'Delivery At': 'OMNI KUKATPALLY HOSPITAL No-20,21,22A,22B,22C,23&24 Balaji Nagar, Kukatpally,Hyderabad-500072, Telangana.'
+    };
+
+    const lorem = "Lorem ipsum dolor sit amet,    consectetur adipiscing elit. Etiam in    suscipit purus. Vestibulum ante ipsum primis in faucibus orci luctuset ultrices posuere cubilia Curae;Vivamus nec hendrerit felis. Morbialiquam facilisis risus eu lacinia. Sedeu leo in turpis fringilla hendrerit. Utnec accumsan nisl. Suspendisserhoncus nisl posuere tortor tempus etdapibus elit porta. Cras leo neque,elementum a rhoncus ut, vestibulum non nibh. Phasellus pretium justoturpis. Etiam vulputate, odio vitaetincidunt ultricies, eros odio dapibusnisi, ut tincidunt lacus arcu eu elit.Aenean velit erat, vehicula egetlacinia ut, dignissim non tellus.Aliquam nec lacus mi, sedvestibulum nunc. Suspendissepotenti. Curabitur vitae sem turpis.Vestibulum sed neque eget dolordapibus porttitor at sit amet sem.Fusce a turpis lorem. Vestibulumante ipsum primis in faucibus orciluctus et ultrices posuere cubiliaCurae;Mauris at ante tellus.Vestibulum a metus lectus. Praesenttempor purus a lacus blandit egetgravida ante hendrerit. Cras et erosmetus. Sed commodo malesuadaeros, vitae interdum augue semperquis. Fusce id magna nunc.Curabitur sollicitudin placeratsemper. Cras et mi neque, adignissim risus. Nulla venenatisporta lacus, vel rhoncus lectustempor vitae. Duis sagittis venenatisrutrum. Curabitur tempor massa…"
+
+    // Create a new PDF document
+    const doc = new PDFDocument(); // Setting width and height
+    doc.pipe(fs.createWriteStream('output.pdf'));
+    const middle = doc.page.width / 2;
+    const startZ = 100;
+    // let zPos =0 ;
+    let accumulatedHeight = startZ;
+    objproperties = Object.keys(aaa);
+    const halfLength = Math.ceil(objproperties.length / 2);
+    // const zPos =100;
+    objproperties.forEach((property, index) => {
+        // Print key-value pair
+        const textWidth = doc.widthOfString(property) + doc.widthOfString(aaa[property]);
+        const lineHeight = Math.ceil(textWidth / (middle - 100));
+        const xPos = index < halfLength ? 50 : middle + 50;
+        // zPos = lineHeight*10
+        console.log(lineHeight)
+        console.log('accumulatedHeight', accumulatedHeight)
+
+        const yPos = accumulatedHeight;
+        // const yPos = zPos + startZ + (index % halfLength) *  lineHeight*10;
+
+        console.log('property', `${property}`)
+        // console.log((index % halfLength) *  lineHeight*10)
+        console.log('lineHeight', lineHeight)
+        console.log('yPos', yPos)
+
+        doc
+            .font('Helvetica').fontSize(9)
+            // .font('Helvetica').fontSize(10)
+            .text(`${property}: ${aaa[property]}`, xPos, yPos,
+                { align: 'left', width: middle - 50 });
+        // .text(lorem, {
+        //     width: 412,
+        //     align: 'justify',
+        //     indent: 30,
+        //     columns: 2,
+        //     height: 100,
+        //     ellipsis: true
+        // });
+
+        accumulatedHeight += lineHeight * 10;
+        console.log('accumulatedHeight1', accumulatedHeight)
+
+        doc.moveDown();
+    });
+
+    // .text(`${property}: ${aaa[property]}`, 50 + (index < objproperties.length / 2 ? 0 : middle), startZ + (index % (objproperties.length / 2))* (lineHeight),{ align: 'left', width: middle - 50 })
+
+    // Print page width divided by 2
+    doc.font('Helvetica-Bold').text(`Page Width / 2: ${middle}`);
+    doc
+        .text('And here is some wrapped text...', 100, 300)
+        .font('Times-Roman', 13)
+        .moveDown()
+        .text(lorem, {
+            width: 412,
+            align: 'justify',
+            indent: 30,
+            columns: 2,
+            height: 100,
+            ellipsis: true
+        });
+
+
+
+    // // Finalize PDF
+    // doc.end();
+
+    // // Create a new PDF document
+    // const doc = new PDFDocument();
+    // doc.pipe(fs.createWriteStream('output.pdf'));
+
+    // // Calculate middle of the page
+    // const middle = doc.page.width / 2;
+    // const startZ = 100;
+
+    // // Get object properties
+    // const objproperties = Object.keys(aaa);
+    // const halfLength = Math.ceil(objproperties.length / 2);
+
+    // // Print key-value pairs
+    // objproperties.forEach((property, index) => {
+    //     const xPos = index < halfLength ? 50 : middle + 50;
+    //     const yPos = startZ + (index % halfLength) * 20;
+    //     doc.text(`${property}: ${aaa[property]}`, xPos, yPos, { align: index < halfLength ? 'left' : 'right', width: middle - 50 });
+    // });
+
+    // Finalize PDF
+    doc.end();
+
+
+}
+
+app.get('/gethtmlpdf', async (req, res) => {
+    onGeneratePdfCretor()
+})
+
+async function onGeneratePdfCretor() {
+    //Required package
+    var pdf = require("pdf-creator-node");
+    var fs = require("fs");
+
+    // Read HTML Template
+    var html = fs.readFileSync("index.html", "utf8");
+    // const middle = doc.page.width / 2;
+    // console.log('middle',middle)
+    var options = {
+        format: "A3",
+        orientation: "portrait",
+        border: "10mm",
+        header: {
+            height: "45mm",
+            contents: '<div style="text-align: center;">Author: Shyam Hajare</div>'
+        },
+        footer: {
+            height: "28mm",
+            contents: {
+                first: 'Cover page',
+                // 2: 'Second page', // Any page number is working. 1-based index
+                default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+                last: 'Last Page'
+            }
+        }
+    };
+
+    var users = [
+        {
+            'HospitalGSTINNo': '36AABCU6403H1ZH',
+            'IndentProcessNo': '',
+            'Auth/AmndDt': '02-01-2024 10:56',
+            'PONo': 'POCS2023000002',
+            'SupplierAddress': 'HIMALAYAPHARMA GROUND FLOORGHORI NAGAR COLON LOD BOWENPALLY SECUGHORI NAGAR COLON LOD BOWENPALLY SECU SECUNDERABAD TELANGANA India',
+            'StoreName': 'CENTRAL STORE',
+            'DeptName': 'Anaesthesiology',
+            'CreditPeriod': '0.00',
+            'DeliveryDate': '',
+            'PODate': '02-jan-24',
+            'DeliveryAt': 'OMNI KUKATPALLY HOSPITAL No-20,21,22A,22B,22C,23&24 Balaji Nagar, Kukatpally,Hyderabad-500072, Telangana.'
+        }
+    ];
+    var users1 = [
+        { name: "Alice", age: 30, occupation: "Engineer" },
+        { name: "Bob", age: 35, occupation: "Designer" },
+        { name: "Charlie", age: 25, occupation: "Developer" }
+    ];
+
+    var document = {
+        html: html,
+        data: {
+            users: users,
+            users1: users1,
+            
+        },
+        path: "./output.pdf",
+        type: "",
+    };
+    pdf
+        .create(document, options)
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    
+}
+
+
+app.listen(1000, () => console.log('ok'));

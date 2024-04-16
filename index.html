@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello world!</title>
+    <style>
+      /* Custom styles */
+      .container {
+        display: flex;
+        justify-content: space-between;
+      }
+      .left {
+        width: 50%; /* Adjust the width as needed */
+        height: 50%;
+      }
+      .right {
+        width: 50%; /* Adjust the width as needed */
+        height: 50%;
+      }
+      /* .right ul {
+        divst-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .right ul div { 
+        margin-bottom: 5px;
+      } */
+      table td,
+      table th {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; width: 100%">
+      <tr>
+        <td style="width: 50%">
+          <div>
+            <!-- <ul> -->
+            <!-- {{#each users}} -->
+            <div>
+              <b>Hospital GSTIN No.:</b> <label>{{this.HospitalGSTINNo}}</label>
+            </div>
+            <div>
+              <b>Indent Process No.:</b>
+              <p>{{this.IndentProcessNo}}</p>
+            </div>
+            <div>
+              <b>Auth/Amnd Dt:</b>
+              <p>{{this.Auth_AmndDt}}</p>
+            </div>
+            <div>
+              <b>PO No.:</b>
+              <p>{{this.PONo}}</p>
+            </div>
+            <div>
+              <b>Suppdiver Address:</b>
+              <p>{{this.SupplierAddress}}</p>
+            </div>
+
+            <!-- {{/each}} -->
+            <!-- </ul> -->
+          </div>
+        </td>
+        <td>
+          <div>
+            <!-- {{#each users}} -->
+
+            <div>
+              <b>Dept. Name:</b>
+              <p>{{this.DeptName}}</p>
+            </div>
+            <div>
+              <b>Credit Period:</b>
+              <p>{{this.DedivveryDate}}</p>
+            </div>
+            <div>
+              <b>Dedivvery Date:</b>
+              <p>{{this.DedivveryDate}}</p>
+            </div>
+            <div>
+              <b>PO Date:</b>
+              <p>{{this.PODate}}</p>
+            </div>
+            <div>
+              <b>Dedivvery At:</b>
+              <p>{{this.DedivveryAt}}</p>
+            </div>
+            <!-- {{/each}} -->
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;  width: 100%">
+      <thead>
+        <tr>
+          <th style="border: 1px sodivd black; padding: 8px">Sl No.</th>
+          <th style="border: 1px sodivd black; padding: 8px">Item Name</th>
+          <th style="border: 1px sodivd black; padding: 8px">HSN Code</th>
+          <th style="border: 1px sodivd black; padding: 8px">MFR</th>
+          <th style="border: 1px sodivd black; padding: 8px">Qty</th>
+          <th style="border: 1px sodivd black; padding: 8px">MRP</th>
+          <th style="border: 1px sodivd black; padding: 8px">RATE</th>
+          <th style="border: 1px sodivd black; padding: 8px">Disc</th>
+          <th style="border: 1px sodivd black; padding: 8px">TAX</th>
+          <th colspan="3" style="border: 1px sodivd black;">
+            GST Amount
+            <table cellpadding="0" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th
+                    style="
+                      background-color: #00ff00;
+                      border: 1px sodivd black;
+                      padding: 8px;
+                    "
+                  >
+                    Sub-column 1
+                  </th>
+                  <th
+                    style="
+                      background-color: #00ff00;
+                      border: 1px sodivd black;
+                      padding: 8px;
+                    "
+                  >
+                    Sub-column 2
+                  </th>
+                  <th
+                    style="
+                      background-color: #00ff00;
+                      border: 1px sodivd black;
+                      padding: 8px;
+                    "
+                  >
+                    Sub-column 3
+                  </th>
+                </tr>
+              </thead>
+            </table>
+          </th>
+          <th style="border: 1px sodivd black; padding: 8px">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each users1}}
+        <tr>
+          <td style="border: 1px sodivd black; padding: 8px">1</td>
+          <td style="border: 1px sodivd black; padding: 8px; width: 200px">
+            DoloFan Inj
+          </td>
+          <td style="border: 1px sodivd black; padding: 8px"></td>
+          <td style="border: 1px sodivd black; padding: 8px">GEN</td>
+          <td style="border: 1px sodivd black; padding: 8px">1.00</td>
+          <td style="border: 1px sodivd black; padding: 8px">12.00</td>
+          <td style="border: 1px sodivd black; padding: 8px">2.00</td>
+          <td style="border: 1px sodivd black; padding: 8px">1.00</td>
+          <td style="border: 1px sodivd black; padding: 8px">3.00</td>
+          <td style="border: 1px sodivd black; padding: 8px">0.60</td>
+          <td style="border: 1px sodivd black; padding: 8px">0.60</td>
+          <td style="border: 1px sodivd black; padding: 8px">0.60</td>
+          <td style="border: 1px sodivd black; padding: 8px">0.60</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <div style="align-items: center;">
+      <label for="" style="margin-right: 18rem;margin-left: 5rem;">Name</label>
+      <label for="" style="margin-right: 18rem;margin-left: 5rem;">DoB</label>
+      <label for="" >Place</label>
+    </div>
+  </body>
+</html>

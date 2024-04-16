@@ -2390,33 +2390,7 @@ async function onGenerateSmplePdf() {
             ellipsis: true
         });
 
-
-
-    // // Finalize PDF
-    // doc.end();
-
-    // // Create a new PDF document
-    // const doc = new PDFDocument();
-    // doc.pipe(fs.createWriteStream('output.pdf'));
-
-    // // Calculate middle of the page
-    // const middle = doc.page.width / 2;
-    // const startZ = 100;
-
-    // // Get object properties
-    // const objproperties = Object.keys(aaa);
-    // const halfLength = Math.ceil(objproperties.length / 2);
-
-    // // Print key-value pairs
-    // objproperties.forEach((property, index) => {
-    //     const xPos = index < halfLength ? 50 : middle + 50;
-    //     const yPos = startZ + (index % halfLength) * 20;
-    //     doc.text(`${property}: ${aaa[property]}`, xPos, yPos, { align: index < halfLength ? 'left' : 'right', width: middle - 50 });
-    // });
-
-    // Finalize PDF
     doc.end();
-
 
 }
 
@@ -2493,6 +2467,4 @@ async function onGeneratePdfCretor() {
         });
     
 }
-
-
 app.listen(1000, () => console.log('ok'));

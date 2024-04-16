@@ -14,7 +14,7 @@ const { Document, Module, ModuleDocument, Roles, AssigneByPermissions, newUser }
 const Custmer = require('./custer.js')
 // const url = 'mongodb://127.0.0.1:27017/projects' //testing ,projects
 // const url = 'mongodb+srv://tapaswigangavarapu:tapas434@cluster0.spvxgrd.mongodb.net/projects?retryWrites=true&w=majority'
-const url = "mongodb+srv://tapaswigangavarapu:tapas434@cluster0.spvxgrd.mongodb.net/";
+const url = "mongodb+srv://tapaswigangavarapu:tapas434@cluster0.spvxgrd.mongodb.net/projects";
 const dbName = "test";
 const currentDate = new Date();
 const jwt = require('jsonwebtoken');

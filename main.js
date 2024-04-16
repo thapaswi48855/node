@@ -25,6 +25,16 @@ const newUuid = uuidv4();
 //     userId: 123,
 //     username: 'exampleuser',
 //   };
+const { storeTypeMaster, storeMaster, uomCreation,
+    addItemCategory, genericClassification, genericSubClassification,
+    genericDetails, supplierCategory, manufacureCreation, supplierDetails, newItem, department } = require('./store.js');
+
+const { master, ZeroLevelMaster } = require('./masters.js');
+const { rasiePurchaseOrder, stockEntry } = require('./procurement.js');
+const { sales, salesReturn, patientIndent, patientReturnIndent } = require('./sales.js');
+const { serviceGroup, serviceSubGroup } = require('./service.js');
+const { taxGroup, taxSubGroup } = require('./tax.js')
+
 async function connection() {
     await mongoose.connect(url,
         {
@@ -92,15 +102,7 @@ function generateUUIDStartingWith1() {
     return sequenceNumber;
 }
 
-const { storeTypeMaster, storeMaster, uomCreation,
-    addItemCategory, genericClassification, genericSubClassification,
-    genericDetails, supplierCategory, manufacureCreation, supplierDetails, newItem, department } = require('./store.js');
 
-const { master, ZeroLevelMaster } = require('./masters.js');
-const { rasiePurchaseOrder, stockEntry } = require('./procurement.js');
-const { sales, salesReturn, patientIndent, patientReturnIndent } = require('./sales.js');
-const { serviceGroup, serviceSubGroup } = require('./service.js');
-const { taxGroup, taxSubGroup } = require('./tax.js')
 
 /* Documents GET & INSERT & UPDate */
 
@@ -2452,7 +2454,7 @@ async function onGeneratePdfCretor() {
         data: {
             users: users,
             users1: users1,
-            
+
         },
         path: "./output.pdf",
         type: "",
@@ -2465,6 +2467,6 @@ async function onGeneratePdfCretor() {
         .catch((error) => {
             console.error(error);
         });
-    
+
 }
 app.listen(1000, () => console.log('ok'));

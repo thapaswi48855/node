@@ -21,6 +21,7 @@ const secretKey = 'your-secret-key';
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const newUuid = uuidv4();
+const port = process.env.PORT || 1000;
 // const payload = {
 //     userId: 123,
 //     username: 'exampleuser',
@@ -2469,4 +2470,8 @@ async function onGeneratePdfCretor() {
         });
 
 }
-app.listen(1000, () => console.log('ok'));
+// app.listen(1000, () => console.log('ok'));
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})

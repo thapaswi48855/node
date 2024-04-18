@@ -386,8 +386,15 @@ app.get('/getNewUsers', async (req, res) => {
 /***************    Store   ******************/
 
 app.post('/insertStoreTypeMaster', async (req, res) => {
+    const componentId ='Store Type Master';
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    // res.json(counter);
+    req.body.storetypeid =counter
     onCommonPost(req, res, storeTypeMaster);
     console.log('type',req.body)
+
     // try {
     //     if (req.body[0] && req.body[0]._id) {
     //         const id = req.body[0]._id

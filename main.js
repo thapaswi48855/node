@@ -705,7 +705,7 @@ app.post('/insertGenericClassificationDetails', async (req, res) => {
     // res.json(counter);
     req.body[0].clasificationid =counter
     onCommonPost(req, res, genericClassification);
-    console.log('Insert Asigments')
+    console.log('clasif',req.body)
     // try {
     //     console.log('Insert Document', req.body)
     //     if (req.body[0] && req.body[0]._id) {

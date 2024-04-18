@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
 const storeTypeMasterSchema = new mongoose.Schema({
+    storetypeid:String,
     storetypename: String,
     storedescription: String,
     status: String,

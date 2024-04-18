@@ -22,6 +22,8 @@ const secretKey = 'your-secret-key';
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const newUuid = uuidv4();
+// Map to store sequence counters
+const counters = new Map();
 const port = process.env.PORT || 1000;
 // const payload = {
 //     userId: 123,
@@ -103,6 +105,15 @@ function generateUUIDStartingWith1() {
     sequenceNumber += 1;
     return sequenceNumber;
 }
+
+// Endpoint to get the next sequence number for a component
+app.post('componentId/next', (req, res) => {
+    const componentId = req.params.componentId;
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    res.json(counter);
+  });
 
 
 
@@ -376,6 +387,7 @@ app.get('/getNewUsers', async (req, res) => {
 
 app.post('/insertStoreTypeMaster', async (req, res) => {
     onCommonPost(req, res, storeTypeMaster);
+    console.log('type',req.body)
     // try {
     //     if (req.body[0] && req.body[0]._id) {
     //         const id = req.body[0]._id

@@ -80,6 +80,7 @@ const addItemCategorySchema = new mongoose.Schema({
 })
 
 const genericClassificationSchema = new mongoose.Schema({
+    clasificationid:String,
     clasificationName: String,
     clasificationDesc: String,
     status:String,

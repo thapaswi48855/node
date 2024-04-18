@@ -391,7 +391,7 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
     counter += 1;
     counters.set(componentId, counter);
     // res.json(counter);
-    req.body.storetypeid =counter
+    req.body[0].storetypeid =counter
     onCommonPost(req, res, storeTypeMaster);
     console.log('type',req.body)
 

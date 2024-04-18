@@ -698,6 +698,12 @@ app.get('/getAddItemCategory', async (req, res) => {
 })
 
 app.post('/insertGenericClassificationDetails', async (req, res) => {
+    const componentId ='Generic Classification Details';
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    // res.json(counter);
+    req.body[0].clasificationid =counter
     onCommonPost(req, res, genericClassification);
     console.log('Insert Asigments')
     // try {

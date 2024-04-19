@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const documentsSchema = new mongoose.Schema({
     // _id:Object,
     // name: String,
+    documentid:String,
     document: String,
     documentpageurl: String,
     documentgridUrl: String,
@@ -11,10 +12,12 @@ const documentsSchema = new mongoose.Schema({
 
 
 const moduleSchema = new mongoose.Schema({
+    moduleid:String,
     modulename: String,
     moduledesc: String,
     status: String,
     submodel: [{
+        submoduleid:String,
         submodulename: String,
         submoduledesc: String,
         submodelstatus: String,
@@ -22,6 +25,7 @@ const moduleSchema = new mongoose.Schema({
 })
 
 const moduleDocumentsSchema = new mongoose.Schema({
+    moduledocMapid:string,
     moduleid: Object,
     modulename: String,
     submoduleid: Object,
@@ -60,6 +64,7 @@ const assigneByPermissions = new mongoose.Schema({
 })
 
 const newUserSchema = new mongoose.Schema({
+    userid:String,
     userRoleid: String,
     userName: String,
     userPhno: String,

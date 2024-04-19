@@ -150,6 +150,12 @@ app.get('/documents', async (req, res) => {
 
 
 app.post('/insertDocuments', async (req, res) => {
+    const componentId ='Document';
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    // res.json(counter);
+    req.body[0].documentid =counter
     onCommonPost(req, res, Document);
     // try {
 
@@ -192,6 +198,12 @@ app.get('/getModules', async (req, res) => {
 })
 
 app.post('/insertModule', async (req, res) => {
+    const componentId ='Module';
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    // res.json(counter);
+    req.body[0].moduleid =counter
     onCommonPost(req, res, Module);
     // try {
     //     if (req.body[0] && req.body[0]._id) {
@@ -236,6 +248,12 @@ app.get('/getModuleDocuments', async (req, res) => {
 })
 
 app.post('/insertModuleDocuments', async (req, res) => {
+    const componentId ='Module Document';
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    // res.json(counter);
+    req.body[0].moduledocMapid =counter
     onCommonPost(req, res, ModuleDocument);
     // try {
     //     console.log('Insert Document')
@@ -330,6 +348,12 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
 
 
 app.post('/insertNewUsers', async (req, res) => {
+    const componentId ='New User';
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    // res.json(counter);
+    req.body[0].userid =counter
     onCommonPost(req, res, newUser);
     // try {
     //     if (req.body[0] && req.body[0]._id) {

@@ -25,7 +25,7 @@ const moduleSchema = new mongoose.Schema({
 })
 
 const moduleDocumentsSchema = new mongoose.Schema({
-    moduledocMapid:string,
+    moduledocMapid:String,
     moduleid: Object,
     modulename: String,
     submoduleid: Object,

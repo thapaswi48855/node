@@ -438,6 +438,12 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
+            const componentId ='Store Type Master';
+            let counter = counters.get(componentId) || 0;
+            counter += 1;
+            counters.set(componentId, counter);
+            // res.json(counter);
+            req.body[0].storetypeid =counter
             console.log('req.body',req.body)
             const currentdt = new Date();
             req.body[0].createdt = currentdt;

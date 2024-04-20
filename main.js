@@ -281,29 +281,44 @@ app.get('/getModuleDocuments', async (req, res) => {
 })
 
 app.post('/insertModuleDocuments', async (req, res) => {
-    const componentId = 'Module Document';
-    let counter = counters.get(componentId) || 0;
-    counter += 1;
-    counters.set(componentId, counter);
-    // res.json(counter);
-    req.body[0].moduledocMapid = counter
-    onCommonPost(req, res, ModuleDocument);
-    // try {
-    //     console.log('Insert Document')
-    //     if (req.body[0] && req.body[0]._id) {
-    //         console.log('Insert Document 1')
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         await ModuleDocument.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         console.log('req.body', req.body)
-    //         await ModuleDocument.insertMany(req.body);
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    // }
+    // const componentId = 'Module Document';
+    // let counter = counters.get(componentId) || 0;
+    // counter += 1;
+    // counters.set(componentId, counter);
+    // // res.json(counter);
+    // req.body[0].moduledocMapid = counter
+    // onCommonPost(req, res, ModuleDocument);
+    try {
+        if (req.body[0].moduledocMapid != 0) {
+            req.body[0].modifydt = new Date();
+            await Document.updateOne({ moduledocMapid: { $eq: req.body[0].moduledocMapid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+
+            const componentId = 'Module Document';
+            const result = await Module.aggregate([
+                { $group: { _id: '$moduledocMapid', maxModuleDocMapId: { $max: '$moduledocMapid' } } }
+            ]).exec();
+            if (result.length > 0) {
+                highestModuleDocMapId = result[0].maxModuleDocMapId || 0;
+            } else {
+                highestModuleDocMapId = 0;
+            }
+            let counter = Math.max(counters.get(componentId) || 0, highestModuleDocMapId) + 1;
+
+            counters.set(componentId, counter);
+            req.body[0].moduledocMapid = counter;
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await Module.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 

@@ -113,7 +113,7 @@ app.post('componentId/next', (req, res) => {
     counter += 1;
     counters.set(componentId, counter);
     res.json(counter);
-  });
+});
 
 
 
@@ -150,12 +150,12 @@ app.get('/documents', async (req, res) => {
 
 
 app.post('/insertDocuments', async (req, res) => {
-    const componentId ='Document';
+    const componentId = 'Document';
     let counter = counters.get(componentId) || 0;
     counter += 1;
     counters.set(componentId, counter);
     // res.json(counter);
-    req.body[0].documentid =counter
+    req.body[0].documentid = counter
     onCommonPost(req, res, Document);
     // try {
 
@@ -198,12 +198,12 @@ app.get('/getModules', async (req, res) => {
 })
 
 app.post('/insertModule', async (req, res) => {
-    const componentId ='Module';
+    const componentId = 'Module';
     let counter = counters.get(componentId) || 0;
     counter += 1;
     counters.set(componentId, counter);
     // res.json(counter);
-    req.body[0].moduleid =counter
+    req.body[0].moduleid = counter
     onCommonPost(req, res, Module);
     // try {
     //     if (req.body[0] && req.body[0]._id) {
@@ -248,12 +248,12 @@ app.get('/getModuleDocuments', async (req, res) => {
 })
 
 app.post('/insertModuleDocuments', async (req, res) => {
-    const componentId ='Module Document';
+    const componentId = 'Module Document';
     let counter = counters.get(componentId) || 0;
     counter += 1;
     counters.set(componentId, counter);
     // res.json(counter);
-    req.body[0].moduledocMapid =counter
+    req.body[0].moduledocMapid = counter
     onCommonPost(req, res, ModuleDocument);
     // try {
     //     console.log('Insert Document')
@@ -326,13 +326,13 @@ app.get('/getAssigneByPermissions', async (req, res) => {
 })
 
 app.post('/insertAssigneByPermissions', async (req, res) => {
-    const componentId ='Assigne By Permissions';
+    const componentId = 'Assigne By Permissions';
     let counter = counters.get(componentId) || 0;
     counter += 1;
     counters.set(componentId, counter);
     // res.json(counter);
-    req.body[0].assignepermissionid =counter
-    
+    req.body[0].assignepermissionid = counter
+
     onCommonPost(req, res, AssigneByPermissions);
     // console.log('Insert Asigments')
     // try {
@@ -355,12 +355,12 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
 
 
 app.post('/insertNewUsers', async (req, res) => {
-    const componentId ='New User';
+    const componentId = 'New User';
     let counter = counters.get(componentId) || 0;
     counter += 1;
     counters.set(componentId, counter);
     // res.json(counter);
-    req.body[0].userid =counter
+    req.body[0].userid = counter
     onCommonPost(req, res, newUser);
     // try {
     //     if (req.body[0] && req.body[0]._id) {
@@ -417,34 +417,19 @@ app.get('/getNewUsers', async (req, res) => {
 /***************    Store   ******************/
 
 app.post('/insertStoreTypeMaster', async (req, res) => {
-    // const componentId ='Store Type Master';
-    // let counter = counters.get(componentId) || 0;
-    // counter += 1;
-    // counters.set(componentId, counter);
-    // // res.json(counter);
-    // req.body[0].storetypeid =counter
-    // // onCommonPost(req, res, storeTypeMaster);
-    // // console.log('type',req.body)
-
     try {
-        // console.log('req.body[0].storetypeid ',req.body[0].storetypeid )
         if (req.body[0].storetypeid != 0) {
-            console.log('req.body[0].storetypeid ',req.body[0].storetypeid )
-            // const id = req.body[0].storetypeid
-            // delete req.body[0]._id
             req.body[0].modifydt = new Date();
             await storeTypeMaster.updateOne({ storetypeid: { $eq: req.body[0].storetypeid } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
-            const componentId ='Store Type Master';
+            const componentId = 'Store Type Master';
             let counter = counters.get(componentId) || 0;
             counter += 1;
             counters.set(componentId, counter);
-            // res.json(counter);
-            req.body[0].storetypeid =counter
-            console.log('req.body',req.body)
+            req.body[0].storetypeid = counter
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
             await storeTypeMaster.insertMany(req.body);
@@ -461,7 +446,6 @@ app.get('/getStoreTypeMaster', async (req, res) => {
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const StoreTypeMaster = require('./store.js').storeTypeMaster;
         const Master = require('./masters.js').master;
-        console.log('req.query', req.query)
         if (req.query) {
             const master = await Master.find(req.query);
             const storeTypeMaster = await StoreTypeMaster.find(req.query);
@@ -481,14 +465,11 @@ app.get('/getStoreTypeMaster', async (req, res) => {
                 });
                 return sObject;
             });
-
             res.json({ data: result });
         } else {
-
             const storeTypeMaster = await StoreMaster.find();
             res.json({ data: storeTypeMaster });
         }
-
     } catch (error) {
         // Handle any errors that may occur during the database query
         console.error(error);
@@ -497,23 +478,29 @@ app.get('/getStoreTypeMaster', async (req, res) => {
 })
 
 app.post('/insertStoreMaster', async (req, res) => {
-    onCommonPost(req, res, storeMaster);
-    // try {
-    //     if (req.body[0] && req.body[0]._id) {
-    //         const id = req.body[0]._id;
-    //         delete req.body[0]._id;
-    //         req.body[0].modifydt = new Date();
-    //         await storeMaster.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         req.body[0].createdt = new Date();
-    //         await storeMaster.insertMany(req.body);
-    //         res.json({ status: "200", message: 'Succes' });
-    //     }
-    // } catch (error) {
-    //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
-    // }
+    // onCommonPost(req, res, storeMaster);
+    try {
+        if (req.body[0].storemasterid != 0) {
+            req.body[0].modifydt = new Date();
+            await storeMaster.updateOne({ storemasterid: { $eq: req.body[0].storemasterid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const componentId = 'Store Master';
+            let counter = counters.get(componentId) || 0;
+            counter += 1;
+            counters.set(componentId, counter);
+            req.body[0].storemasterid = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await storeMaster.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.get('/getStoreMaster', async (req, res) => {
@@ -738,14 +725,14 @@ app.get('/getAddItemCategory', async (req, res) => {
 })
 
 app.post('/insertGenericClassificationDetails', async (req, res) => {
-    const componentId ='Generic Classification Details';
+    const componentId = 'Generic Classification Details';
     let counter = counters.get(componentId) || 0;
     counter += 1;
     counters.set(componentId, counter);
     // res.json(counter);
-    req.body[0].clasificationid =counter
+    req.body[0].clasificationid = counter
     onCommonPost(req, res, genericClassification);
-    console.log('clasif',req.body)
+    console.log('clasif', req.body)
     // try {
     //     console.log('Insert Document', req.body)
     //     if (req.body[0] && req.body[0]._id) {
@@ -2539,5 +2526,5 @@ async function onGeneratePdfCretor() {
 // app.listen(1000, () => console.log('ok'));
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+    console.log(`Example app listening on port ${port}`)
 })

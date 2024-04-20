@@ -13,6 +13,7 @@ const storeTypeMasterSchema = new mongoose.Schema({
 })
 
 const storeMasterSchema= new mongoose.Schema({
+    storemasterid:String,
     store: String,
     counter: String,
     status:String,

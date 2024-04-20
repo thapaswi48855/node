@@ -165,11 +165,11 @@ app.post('/insertDocuments', async (req, res) => {
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
-
+console.log('result','1')
             const result = await Document.aggregate([
                 { $group: { _id: null, maxDocumentId: { $max: '$documentid' } } }
             ]).toArray();
-    
+            console.log('result',result)
             if (result.length > 0) {
                 // return result[0].maxDocumentId || 0;
                 highestDocumentId =result[0].maxDocumentId || 0;

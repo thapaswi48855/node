@@ -177,7 +177,9 @@ console.log('result','1')
                 // return 0; // If no documents found, return 0 as the highest ID
                 highestDocumentId =0 ;
             }
+            console.log('highestDocumentId',highestDocumentId)
             let counter = Math.max(counters.get(componentId) || 0, highestDocumentId) + 1;
+            console.log('counter',counter)
             counters.set(componentId, counter);
             req.body[0].documentid = counter;
 

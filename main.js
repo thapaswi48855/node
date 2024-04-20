@@ -178,6 +178,7 @@ console.log('result','1')
                 highestDocumentId =0 ;
             }
             console.log('highestDocumentId',highestDocumentId)
+            console.log('counters.get(componentId)',counters.get(componentId))
             let counter = Math.max(counters.get(componentId) || 0, highestDocumentId) + 1;
             console.log('counter',counter)
             counters.set(componentId, counter);

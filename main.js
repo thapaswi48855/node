@@ -165,7 +165,7 @@ app.post('/insertDocuments', async (req, res) => {
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
-            console.log('result', '1')
+
             const componentId = 'Document';
             const result = await Document.aggregate([
                 { $group: { _id: '$documentid', maxDocumentId: { $max: '$documentid' } } }
@@ -175,9 +175,8 @@ app.post('/insertDocuments', async (req, res) => {
             } else {
                 highestDocumentId = 0;
             }
-            console.log('highestDocumentId',highestDocumentId)
             let counter = Math.max(counters.get(componentId) || 0, highestDocumentId) + 1;
-            console.log('counter',counter)
+
             counters.set(componentId, counter);
             req.body[0].documentid = counter;
             const currentdt = new Date();
@@ -216,28 +215,44 @@ app.get('/getModules', async (req, res) => {
 })
 
 app.post('/insertModule', async (req, res) => {
-    const componentId = 'Module';
-    let counter = counters.get(componentId) || 0;
-    counter += 1;
-    counters.set(componentId, counter);
-    // res.json(counter);
-    req.body[0].moduleid = counter
-    onCommonPost(req, res, Module);
-    // try {
-    //     if (req.body[0] && req.body[0]._id) {
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         console.log(id)
-    //         console.log(req.body[0])
-    //         await Module.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         await Module.insertMany(req.body);
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    // }
+    // const componentId = 'Module';
+    // let counter = counters.get(componentId) || 0;
+    // counter += 1;
+    // counters.set(componentId, counter);
+    // // res.json(counter);
+    // req.body[0].moduleid = counter
+    // onCommonPost(req, res, Module);
+    try {
+        if (req.body[0].moduleid != 0) {
+            req.body[0].modifydt = new Date();
+            await Document.updateOne({ moduleid: { $eq: req.body[0].moduleid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+
+            const componentId = 'Module';
+            const result = await Module.aggregate([
+                { $group: { _id: '$moduleid', maxModuleId: { $max: '$moduleid' } } }
+            ]).exec();
+            if (result.length > 0) {
+                highestModuleId = result[0].maxModuleId || 0;
+            } else {
+                highestModuleId = 0;
+            }
+            let counter = Math.max(counters.get(componentId) || 0, highestModuleId) + 1;
+
+            counters.set(componentId, counter);
+            req.body[0].moduleid = counter;
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await Module.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 

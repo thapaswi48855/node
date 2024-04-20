@@ -423,28 +423,29 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
     counters.set(componentId, counter);
     // res.json(counter);
     req.body[0].storetypeid =counter
-    onCommonPost(req, res, storeTypeMaster);
-    console.log('type',req.body)
+    // onCommonPost(req, res, storeTypeMaster);
+    // console.log('type',req.body)
 
-    // try {
-    //     if (req.body[0] && req.body[0]._id) {
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         req.body[0].modifydt = new Date();
-    //         await storeTypeMaster.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //         res.json({ status: "200", message: 'Update Successfull' });
-    //     } else {
-    //         const currentdt = new Date();
-    //         req.body[0].createdt = currentdt;
-    //         await storeTypeMaster.insertMany(req.body);
-    //         res.json({ status: "200", message: 'Create Successfull' });
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
-    // }
+    try {
+        if (req.body[0]) {
+            // const id = storetypeid._id
+            // delete req.body[0]._id
+            req.body[0].modifydt = new Date();
+            req.body[0].codeGen = on
+            await storeTypeMaster.updateOne({ storetypeid: { $eq: req.body[0].storetypeid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await storeTypeMaster.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.get('/getStoreTypeMaster', async (req, res) => {

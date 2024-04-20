@@ -417,14 +417,14 @@ app.get('/getNewUsers', async (req, res) => {
 /***************    Store   ******************/
 
 app.post('/insertStoreTypeMaster', async (req, res) => {
-    const componentId ='Store Type Master';
-    let counter = counters.get(componentId) || 0;
-    counter += 1;
-    counters.set(componentId, counter);
-    // res.json(counter);
-    req.body[0].storetypeid =counter
-    // onCommonPost(req, res, storeTypeMaster);
-    // console.log('type',req.body)
+    // const componentId ='Store Type Master';
+    // let counter = counters.get(componentId) || 0;
+    // counter += 1;
+    // counters.set(componentId, counter);
+    // // res.json(counter);
+    // req.body[0].storetypeid =counter
+    // // onCommonPost(req, res, storeTypeMaster);
+    // // console.log('type',req.body)
 
     try {
         // console.log('req.body[0].storetypeid ',req.body[0].storetypeid )

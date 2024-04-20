@@ -427,12 +427,13 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
     // console.log('type',req.body)
 
     try {
-        console.log('req.body[0].storetypeid ',req.body[0].storetypeid )
+        // console.log('req.body[0].storetypeid ',req.body[0].storetypeid )
         if (req.body[0].storetypeid != 0) {
+            console.log('req.body[0].storetypeid ',req.body[0].storetypeid )
             // const id = req.body[0].storetypeid
             // delete req.body[0]._id
             req.body[0].modifydt = new Date();
-            await storeTypeMaster.updateOne({ storetypeid: { $eq: storetypeid } }, {
+            await storeTypeMaster.updateOne({ storetypeid: { $eq: req.body[0].storetypeid } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });

@@ -8,6 +8,11 @@ const documentsSchema = new mongoose.Schema({
     documentpageurl: String,
     documentgridUrl: String,
     documentdescription: String,
+    status:String,
+    createdt: String,
+    createby: String,
+    modifydt: String,
+    modifyby: String,
 })
 
 

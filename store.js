@@ -2,7 +2,7 @@ const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
 const storeTypeMasterSchema = new mongoose.Schema({
-    storetypeid:String,
+    storetypeid:BigInt,
     storetypename: String,
     storedescription: String,
     status: String,
@@ -13,7 +13,7 @@ const storeTypeMasterSchema = new mongoose.Schema({
 })
 
 const storeMasterSchema= new mongoose.Schema({
-    storemasterid:String,
+    storemasterid:BigInt,
     store: String,
     counter: String,
     status:String,

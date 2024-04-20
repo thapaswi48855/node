@@ -17,12 +17,12 @@ const documentsSchema = new mongoose.Schema({
 
 
 const moduleSchema = new mongoose.Schema({
-    moduleid:String,
+    moduleid:BigInt,
     modulename: String,
     moduledesc: String,
     status: String,
     submodel: [{
-        submoduleid:String,
+        submoduleid:BigInt,
         submodulename: String,
         submoduledesc: String,
         submodelstatus: String,
@@ -30,7 +30,7 @@ const moduleSchema = new mongoose.Schema({
 })
 
 const moduleDocumentsSchema = new mongoose.Schema({
-    moduledocMapid:String,
+    moduledocMapid:BigInt,
     moduleid: Object,
     modulename: String,
     submoduleid: Object,
@@ -49,7 +49,7 @@ const roleSchema = new mongoose.Schema({
 })
 
 const assigneByPermissions = new mongoose.Schema({
-    assignepermissionid:String,
+    assignepermissionid:BigInt,
     roleid: Object,
     rolename: String,
     moduleid: Object,
@@ -70,7 +70,7 @@ const assigneByPermissions = new mongoose.Schema({
 })
 
 const newUserSchema = new mongoose.Schema({
-    userid:String,
+    userid:BigInt,
     userRoleid: String,
     userName: String,
     userPhno: String,

@@ -427,7 +427,7 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
     // console.log('type',req.body)
 
     try {
-        if (req.body[0]) {
+        if (req.body[0] && req.body[0].storetypeid ) {
             // const id = storetypeid._id
             // delete req.body[0]._id
             req.body[0].modifydt = new Date();

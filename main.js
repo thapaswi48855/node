@@ -150,27 +150,35 @@ app.get('/documents', async (req, res) => {
 
 
 app.post('/insertDocuments', async (req, res) => {
-    const componentId = 'Document';
-    let counter = counters.get(componentId) || 0;
-    counter += 1;
-    counters.set(componentId, counter);
-    // res.json(counter);
-    req.body[0].documentid = counter
-    onCommonPost(req, res, Document);
-    // try {
-
-    //     if (req.body[0] && req.body[0]._id) {
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         await Document.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         await Document.insertMany(req.body);
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    // }
+    // const componentId = 'Document';
+    // let counter = counters.get(componentId) || 0;
+    // counter += 1;
+    // counters.set(componentId, counter);
+    // // res.json(counter);
+    // req.body[0].documentid = counter
+    // onCommonPost(req, res, Document);
+    try {
+        if (req.body[0].documentid != 0) {
+            req.body[0].modifydt = new Date();
+            await Document.updateOne({ documentid: { $eq: req.body[0].documentid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const componentId = 'Document';
+            let counter = counters.get(componentId) || 0;
+            counter += 1;
+            counters.set(componentId, counter);
+            req.body[0].documentid = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await Document.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 /* Module GET & INSERT & UPDate */

@@ -165,11 +165,29 @@ app.post('/insertDocuments', async (req, res) => {
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
-            const componentId = 'Document';
-            let counter = counters.get(componentId) || 0;
-            counter += 1;
+
+            const result = await Document.aggregate([
+                { $group: { _id: null, maxDocumentId: { $max: '$documentid' } } }
+            ]).toArray();
+    
+            if (result.length > 0) {
+                // return result[0].maxDocumentId || 0;
+                highestDocumentId =result[0].maxDocumentId || 0;
+            } else {
+                // return 0; // If no documents found, return 0 as the highest ID
+                highestDocumentId =0 ;
+            }
+            let counter = Math.max(counters.get(componentId) || 0, highestDocumentId) + 1;
             counters.set(componentId, counter);
-            req.body[0].documentid = counter
+            req.body[0].documentid = counter;
+
+console.log('req.body[0].documentid',req.body[0].documentid)
+
+            // const componentId = 'Document';
+            // let counter = counters.get(componentId) || 0;
+            // counter += 1;
+            // counters.set(componentId, counter);
+            // req.body[0].documentid = counter
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
             await Document.insertMany(req.body);

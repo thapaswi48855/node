@@ -167,7 +167,7 @@ app.post('/insertDocuments', async (req, res) => {
         } else {
 console.log('result','1')
             const result = await Document.aggregate([
-                { $group: { _id: null, maxDocumentId: { $max: documentid } } }
+                { $group: { _id: null, maxDocumentId: { $max: 'documentid' } } }
             ]).exec();
             console.log('result',result)
             if (result.length > 0) {

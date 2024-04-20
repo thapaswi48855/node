@@ -165,26 +165,27 @@ app.post('/insertDocuments', async (req, res) => {
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
-console.log('result','1')
+            console.log('result', '1')
+            const componentId = 'Document';
             const result = await Document.aggregate([
                 { $group: { _id: null, maxDocumentId: { $max: '$documentid' } } }
             ]).exec();
-            console.log('result',result)
+            console.log('result', result)
             if (result.length > 0) {
                 // return result[0].maxDocumentId || 0;
-                highestDocumentId =result[0].maxDocumentId || 0;
+                highestDocumentId = result[0].maxDocumentId || 0;
             } else {
                 // return 0; // If no documents found, return 0 as the highest ID
-                highestDocumentId =0 ;
+                highestDocumentId = 0;
             }
-            console.log('highestDocumentId',highestDocumentId)
-            console.log('counters.get(componentId)',counters.get(componentId))
+            console.log('highestDocumentId', highestDocumentId)
+            console.log('counters.get(componentId)', counters.get(componentId))
             let counter = Math.max(counters.get(componentId) || 0, highestDocumentId) + 1;
-            console.log('counter',counter)
+            console.log('counter', counter)
             counters.set(componentId, counter);
             req.body[0].documentid = counter;
 
-console.log('req.body[0].documentid',req.body[0].documentid)
+            console.log('req.body[0].documentid', req.body[0].documentid)
 
             // const componentId = 'Document';
             // let counter = counters.get(componentId) || 0;

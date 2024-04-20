@@ -175,12 +175,11 @@ app.post('/insertDocuments', async (req, res) => {
             } else {
                 highestDocumentId = 0;
             }
-           
+            console.log('highestDocumentId',highestDocumentId)
             let counter = Math.max(counters.get(componentId) || 0, highestDocumentId) + 1;
             console.log('counter',counter)
             counters.set(componentId, counter);
             req.body[0].documentid = counter;
-return
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
             await Document.insertMany(req.body);

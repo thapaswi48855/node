@@ -168,7 +168,7 @@ app.post('/insertDocuments', async (req, res) => {
             console.log('result', '1')
             const componentId = 'Document';
             const result = await Document.aggregate([
-                { $group: { _id: null, maxDocumentId: { $max: '$documentid' } } }
+                { $group: { _id: '$documentid', maxDocumentId: { $max: '$documentid' } } }
             ]).exec();
             if (result.length > 0) {
                 highestDocumentId = result[0].maxDocumentId || 0;

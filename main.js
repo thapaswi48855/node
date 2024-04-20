@@ -326,6 +326,13 @@ app.get('/getAssigneByPermissions', async (req, res) => {
 })
 
 app.post('/insertAssigneByPermissions', async (req, res) => {
+    const componentId ='Assigne By Permissions';
+    let counter = counters.get(componentId) || 0;
+    counter += 1;
+    counters.set(componentId, counter);
+    // res.json(counter);
+    req.body[0].assignepermissionid =counter
+    
     onCommonPost(req, res, AssigneByPermissions);
     // console.log('Insert Asigments')
     // try {

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const documentsSchema = new mongoose.Schema({
     // _id:Object,
     // name: String,
-    documentid:Integer,
+    documentid:BigInt,
     document: String,
     documentpageurl: String,
     documentgridUrl: String,

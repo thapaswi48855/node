@@ -70,7 +70,7 @@ const assigneByPermissions = new mongoose.Schema({
 })
 
 const newUserSchema = new mongoose.Schema({
-    userid:BigInt,
+    userid:String,
     userRoleid: String,
     userName: String,
     userPhno: String,

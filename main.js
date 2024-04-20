@@ -427,6 +427,7 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
     // console.log('type',req.body)
 
     try {
+        console.log('req.body[0].storetypeid ',req.body[0].storetypeid )
         if (req.body[0].storetypeid != 0) {
             // const id = req.body[0].storetypeid
             // delete req.body[0]._id
@@ -436,6 +437,7 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
+            console.log('req.body',req.body)
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
             await storeTypeMaster.insertMany(req.body);

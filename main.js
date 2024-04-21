@@ -720,7 +720,7 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
                 const result = await storeTypeMaster.aggregate([
                     { $group: { _id: null, maxStoreTypeid: { $max: '$storetypeid' } } }
                 ]).exec();
-    
+    console.log('maxStoreTypeid',maxStoreTypeid)
                 let counter = (result[0] && result[0].maxStoreTypeid) ? result[0].maxStoreTypeid + 1 : 1;
     
                 counters.set(componentId, counter);

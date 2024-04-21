@@ -1044,7 +1044,7 @@ app.get('/getAddItemCategory', async (req, res) => {
         if (req.query) {
             let query = req.query;
             const addItemCategory = await AddItemCategory.find(query || {});
-            const master = await Master.find(rquery);
+            const master = await Master.find(query);
 
             // Convert BigInt values to strings
             if (query && query.addcategoryid && typeof query.addcategoryid === 'bigint') {

@@ -207,11 +207,20 @@ app.get('/getModules', async (req, res) => {
         //     res.json({ data: module });
         // }
 
-        let query = req.query;
-        // Convert BigInt values to strings
-        if (query && query.moduleId && typeof query.moduleId === 'bigint') {
+        // let query = req.query;
+        // // Convert BigInt values to strings
+        // if (query && query.moduleId && typeof query.moduleId === 'bigint') {
+        //     query.moduleId = query.moduleId.toString();
+        // }
+
+        // Clone the request query object to prevent modification of the original object
+        const query = { ...req.query };
+
+        // Convert BigInt values to strings in the cloned query object
+        if (query.moduleId && typeof query.moduleId === 'bigint') {
             query.moduleId = query.moduleId.toString();
         }
+
 
         const modules = await Module.find(query || {});
 

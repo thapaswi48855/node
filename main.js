@@ -817,8 +817,12 @@ app.post('/insertStoreMaster', async (req, res) => {
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
             const componentId = 'Store Master';
-            let counter = counters.get(componentId) || 0;
-            counter += 1;
+            const result = await storeMaster.aggregate([
+                { $group: { _id: null, maxStoreMasterId: { $max: '$storemasterid' } } }
+            ]).exec();
+
+            let counter = (result[0] && result[0].maxStoreMasterId) ? result[0].maxStoreMasterId + 1 : 1;
+
             counters.set(componentId, counter);
             req.body[0].storemasterid = counter
             const currentdt = new Date();
@@ -841,9 +845,18 @@ app.get('/getStoreMaster', async (req, res) => {
         const StoreTypeMaster = require('./store.js').storeTypeMaster;
 
         if (req.query) {
-            const storeMaster = await StoreMaster.find(req.query);
-            const master = await Master.find(req.query);
-            const storeTypeMaster = await StoreTypeMaster.find(req.query);
+
+            let query = req.query;
+
+            const storeMaster = await StoreMaster.find(query);
+            const master = await Master.find(query);
+            const storeTypeMaster = await StoreTypeMaster.find(query || {});
+
+             // Convert BigInt values to strings
+             if (query && query.storemasterid && typeof query.storemasterid === 'bigint') {
+                query.storemasterid = query.storemasterid.toString();
+            }
+
 
             const result = storeMaster.map(sObject => {
                 const storeKeys = ['counter', 'status', 'autoFillPrecription', 'accountGroup', 'salesUnit', 'isSuperStore',
@@ -869,10 +882,22 @@ app.get('/getStoreMaster', async (req, res) => {
                     }
                 });
                 return sObject;
-
                 // return mergedObject;
             });
-            res.json({ data: storeMaster });
+             // Custom serialization function to handle BigInt values
+             const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: storeMaster });
+            res.send(serializedDocuments);
+            // res.json({ data: storeMaster });
         } else {
 
             const storeMaster = await StoreMaster.find();

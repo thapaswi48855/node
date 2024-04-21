@@ -192,12 +192,8 @@ app.post('/insertDocuments', async (req, res) => {
             const result = await Document.aggregate([
                 { $group: { _id: '$documentid', maxDocumentId: { $max: '$documentid' } } }
             ]).exec();
-            if (result.length > 0) {
-                highestDocumentId = result[0].maxDocumentId || 0;
-            } else {
-                highestDocumentId = 0;
-            }
-            let counter = Math.max(counters.get(componentId) || 0, highestDocumentId) + 1;
+
+            let counter = (result[0] && result[0].maxDocumentId) ? result[0].maxDocumentId + 1 : 1;
 
             counters.set(componentId, counter);
             req.body[0].documentid = counter;
@@ -413,13 +409,8 @@ app.post('/insertModuleDocuments', async (req, res) => {
             const result = await ModuleDocument.aggregate([
                 { $group: { _id: '$moduledocMapid', maxModuleDocMapId: { $max: '$moduledocMapid' } } }
             ]).exec();
-            if (result.length > 0) {
-                highestModuleDocMapId = result[0].maxModuleDocMapId || 0;
-            } else {
-                highestModuleDocMapId = 0;
-            }
-            console.log('highestModuleDocMapId',highestModuleDocMapId)
-            let counter = Math.max(counters.get(componentId) || 0, highestModuleDocMapId) + 1;
+
+            let counter = (result[0] && result[0].maxModuleDocMapId) ? result[0].maxModuleDocMapId + 1 : 1;
 
             counters.set(componentId, counter);
             req.body[0].moduledocMapid = counter;
@@ -549,12 +540,8 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
             const result = await AssigneByPermissions.aggregate([
                 { $group: { _id: '$assignepermissionid', maxAssignepermissionid: { $max: '$assignepermissionid' } } }
             ]).exec();
-            if (result.length > 0) {
-                highestAssignepermissionid = result[0].maxAssignepermissionid || 0;
-            } else {
-                highestAssignepermissionid = 0;
-            }
-            let counter = Math.max(counters.get(componentId) || 0, highestAssignepermissionid) + 1;
+
+            let counter = (result[0] && result[0].maxAssignepermissionid) ? result[0].maxAssignepermissionid + 1 : 1;
 
             counters.set(componentId, counter);
             req.body[0].assignepermissionid = counter;
@@ -611,12 +598,8 @@ app.post('/insertNewUsers', async (req, res) => {
             const result = await newUser.aggregate([
                 { $group: { _id: '$auserid', maxUserid: { $max: '$userid' } } }
             ]).exec();
-            if (result.length > 0) {
-                highestUserid = result[0].maxUserid || 0;
-            } else {
-                highestUserid = 0;
-            }
-            let counter = Math.max(counters.get(componentId) || 0, highestUserid) + 1;
+
+            let counter = (result[0] && result[0].maxUserid) ? result[0].maxUserid + 1 : 1;
 
             counters.set(componentId, counter);
             req.body[0].Userid = counter;

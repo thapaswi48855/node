@@ -190,7 +190,7 @@ app.post('/insertDocuments', async (req, res) => {
 
             const componentId = 'Document';
             const result = await Document.aggregate([
-                { $group: { _id: '$documentid', maxDocumentId: { $max: '$documentid' } } }
+                { $group: { _id: null, maxDocumentId: { $max: '$documentid' } } }
             ]).exec();
 
             let counter = (result[0] && result[0].maxDocumentId) ? result[0].maxDocumentId + 1 : 1;

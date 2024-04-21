@@ -392,6 +392,7 @@ app.post('/insertModuleDocuments', async (req, res) => {
             } else {
                 highestModuleDocMapId = 0;
             }
+            console.log('highestModuleDocMapId',highestModuleDocMapId)
             let counter = Math.max(counters.get(componentId) || 0, highestModuleDocMapId) + 1;
 
             counters.set(componentId, counter);

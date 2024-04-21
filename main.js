@@ -690,22 +690,49 @@ app.get('/getNewUsers', async (req, res) => {
 
 app.post('/insertStoreTypeMaster', async (req, res) => {
     try {
-        if (req.body[0].storetypeid != 0) {
-            req.body[0].modifydt = new Date();
-            await storeTypeMaster.updateOne({ storetypeid: { $eq: req.body[0].storetypeid } }, {
-                $set: req.body[0]
-            });
-            res.json({ status: "200", message: 'Update Successfull' });
-        } else {
-            const componentId = 'Store Type Master';
-            let counter = counters.get(componentId) || 0;
-            counter += 1;
-            counters.set(componentId, counter);
-            req.body[0].storetypeid = counter
-            const currentdt = new Date();
-            req.body[0].createdt = currentdt;
-            await storeTypeMaster.insertMany(req.body);
-            res.json({ status: "200", message: 'Create Successfull' });
+        // if (req.body[0].storetypeid != 0) {
+        //     req.body[0].modifydt = new Date();
+        //     await storeTypeMaster.updateOne({ storetypeid: { $eq: req.body[0].storetypeid } }, {
+        //         $set: req.body[0]
+        //     });
+        //     res.json({ status: "200", message: 'Update Successfull' });
+        // } else {
+        //     const componentId = 'Store Type Master';
+        //     let counter = counters.get(componentId) || 0;
+        //     counter += 1;
+        //     counters.set(componentId, counter);
+        //     req.body[0].storetypeid = counter
+        //     const currentdt = new Date();
+        //     req.body[0].createdt = currentdt;
+        //     await storeTypeMaster.insertMany(req.body);
+        //     res.json({ status: "200", message: 'Create Successfull' });
+        // }
+        try {
+            if (req.body[0].storetypeid != 0) {
+                req.body[0].modifydt = new Date();
+                await storeTypeMaster.updateOne({ storetypeid: { $eq: req.body[0].storetypeid } }, {
+                    $set: req.body[0]
+                });
+                res.json({ status: "200", message: 'Update Successfull' });
+            } else {
+    
+                const componentId = 'Store Type';
+                const result = await storeTypeMaster.aggregate([
+                    { $group: { _id: null, maxStoreTypeid: { $max: '$storetypeid' } } }
+                ]).exec();
+    
+                let counter = (result[0] && result[0].maxStoreTypeid) ? result[0].maxStoreTypeid + 1 : 1;
+    
+                counters.set(componentId, counter);
+                req.body[0].storetypeid = counter;
+                const currentdt = new Date();
+                req.body[0].createdt = currentdt;
+                await storeTypeMaster.insertMany(req.body);
+                res.json({ status: "200", message: 'Create Successfull' });
+            }
+        } catch (error) {
+            console.log('Update Error')
+            res.status(500).json({ status: "500", message: 'Error', error: error.message });
         }
     } catch (error) {
         console.log('Update Error')
@@ -719,8 +746,17 @@ app.get('/getStoreTypeMaster', async (req, res) => {
         const StoreTypeMaster = require('./store.js').storeTypeMaster;
         const Master = require('./masters.js').master;
         if (req.query) {
-            const master = await Master.find(req.query);
-            const storeTypeMaster = await StoreTypeMaster.find(req.query);
+            let query = req.query;
+
+            const master = await Master.find(query);
+            const storeTypeMaster = await StoreTypeMaster.find(query || {});
+
+           
+            // Convert BigInt values to strings
+            if (query && query.storetypeid && typeof query.storetypeid === 'bigint') {
+                query.storetypeid = query.storetypeid.toString();
+            }
+
 
             const result = storeTypeMaster.map(sObject => {
                 const storeKeys = ['status'];
@@ -737,7 +773,28 @@ app.get('/getStoreTypeMaster', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: result });
+            // res.json({ data: result });
+            // const newUsers = await NewUser.find(query || {});
+
+
+           
+
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: result });
+            res.send(serializedDocuments);
+
+
+
         } else {
             const storeTypeMaster = await StoreMaster.find();
             res.json({ data: storeTypeMaster });

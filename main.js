@@ -433,28 +433,28 @@ app.post('/insertModuleDocuments', async (req, res) => {
 app.get('/getRoles', async (req, res) => {
 
     try {
-        const Roles = await Roles.find();
-        // res.json({ data: roles });
-        let query = req.query;
-        // Convert BigInt values to strings
-        if (query && query.roleid && typeof query.roleid === 'bigint') {
-            query.roleid = query.roleid.toString();
-        }
+        const roles = await Roles.find();
+        res.json({ data: roles });
+        // let query = req.query;
+        // // Convert BigInt values to strings
+        // if (query && query.roleid && typeof query.roleid === 'bigint') {
+        //     query.roleid = query.roleid.toString();
+        // }
 
-        const roles = await Roles.find(query || {});
+        // const roles = await Roles.find(query || {});
 
-        // Custom serialization function to handle BigInt values
-        const serialize = (data) => {
-            return JSON.stringify(data, (key, value) => {
-                if (typeof value === 'bigint') {
-                    return value.toString();
-                }
-                return value;
-            });
-        };
-        // Serialize the response data
-        const serializedDocuments = serialize({ data: roles });
-        res.send(serializedDocuments);
+        // // Custom serialization function to handle BigInt values
+        // const serialize = (data) => {
+        //     return JSON.stringify(data, (key, value) => {
+        //         if (typeof value === 'bigint') {
+        //             return value.toString();
+        //         }
+        //         return value;
+        //     });
+        // };
+        // // Serialize the response data
+        // const serializedDocuments = serialize({ data: roles });
+        // res.send(serializedDocuments);
 
     } catch (error) {
         // Handle any errors that may occur during the database query

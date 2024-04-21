@@ -213,16 +213,35 @@ app.get('/getModules', async (req, res) => {
         //     query.moduleId = query.moduleId.toString();
         // }
 
-        // Clone the request query object to prevent modification of the original object
-        const query = { ...req.query };
+        // // Clone the request query object to prevent modification of the original object
+        // const query = { ...req.query };
 
-        // Convert BigInt values to strings in the cloned query object
-        if (query.moduleId && typeof query.moduleId === 'bigint') {
+        // // Convert BigInt values to strings in the cloned query object
+        // if (query.moduleId && typeof query.moduleId === 'bigint') {
+        //     query.moduleId = query.moduleId.toString();
+        // }
+
+
+        // const modules = await Module.find(query || {});
+
+        let query = req.query;
+
+        // Convert BigInt values to strings in the query
+        if (query && query.moduleId && typeof query.moduleId === 'bigint') {
             query.moduleId = query.moduleId.toString();
         }
 
+        // Fetch documents from MongoDB
+        let modules = await Module.find(query || {});
 
-        const modules = await Module.find(query || {});
+        // Convert BigInt values to strings in the fetched documents
+        modules = modules.map(module => {
+            if (module.moduleId && typeof module.moduleId === 'bigint') {
+                module.moduleId = module.moduleId.toString();
+            }
+            return module;
+        });
+
 
         res.json({ data: modules });
 

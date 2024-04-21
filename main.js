@@ -407,7 +407,7 @@ app.post('/insertModuleDocuments', async (req, res) => {
 
             const componentId = 'Module Document';
             const result = await ModuleDocument.aggregate([
-                { $group: { _id: '$moduledocMapid', maxModuleDocMapId: { $max: '$moduledocMapid' } } }
+                { $group: { _id: null, maxModuleDocMapId: { $max: '$moduledocMapid' } } }
             ]).exec();
 
             let counter = (result[0] && result[0].maxModuleDocMapId) ? result[0].maxModuleDocMapId + 1 : 1;
@@ -558,7 +558,7 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
 
             const componentId = 'Assigne By Permissions';
             const result = await AssigneByPermissions.aggregate([
-                { $group: { _id: '$assignepermissionid', maxAssignepermissionid: { $max: '$assignepermissionid' } } }
+                { $group: { _id: null, maxAssignepermissionid: { $max: '$assignepermissionid' } } }
             ]).exec();
 
             let counter = (result[0] && result[0].maxAssignepermissionid) ? result[0].maxAssignepermissionid + 1 : 1;
@@ -616,7 +616,7 @@ app.post('/insertNewUsers', async (req, res) => {
 
             const componentId = 'New User';
             const result = await newUser.aggregate([
-                { $group: { _id: '$auserid', maxUserid: { $max: '$userid' } } }
+                { $group: { _id: null, maxUserid: { $max: '$userid' } } }
             ]).exec();
 
             let counter = (result[0] && result[0].maxUserid) ? result[0].maxUserid + 1 : 1;

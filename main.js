@@ -715,15 +715,22 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
                 });
                 res.json({ status: "200", message: 'Update Successfull' });
             } else {
-    
+
+                //             const componentId = 'Store Type';
+                //             console.log('maxStoreTypeid','1')
+                //             const result = await storeTypeMaster.aggregate([
+                //                 { $group: { _id: null, maxStoreTypeid: { $max: '$storetypeid' } } }
+                //             ]);
+                // console.log('maxStoreTypeid',maxStoreTypeid)
+                //             let counter = (result[0] && result[0].maxStoreTypeid) ? result[0].maxStoreTypeid + 1 : 1;
+
                 const componentId = 'Store Type';
-                console.log('maxStoreTypeid','1')
                 const result = await storeTypeMaster.aggregate([
-                    { $group: { _id: null, maxStoreTypeid: { $max: '$storetypeid' } } }
-                ]);
-    console.log('maxStoreTypeid',maxStoreTypeid)
-                let counter = (result[0] && result[0].maxStoreTypeid) ? result[0].maxStoreTypeid + 1 : 1;
-    
+                    { $group: { _id: null, maxStoreTypeId: { $max: '$storetypeid' } } }
+                ]).exec();
+                console.log('result[0]',result[0])
+                let counter = (result[0] && result[0].maxStoreTypeId) ? result[0].maxStoreTypeId + 1 : 1;
+console.log('counter',counter)
                 // counters.set(componentId, counter);
                 req.body[0].storetypeid = counter;
                 const currentdt = new Date();
@@ -752,7 +759,7 @@ app.get('/getStoreTypeMaster', async (req, res) => {
             const master = await Master.find(query);
             const storeTypeMaster = await StoreTypeMaster.find(query || {});
 
-           
+
             // Convert BigInt values to strings
             if (query && query.storetypeid && typeof query.storetypeid === 'bigint') {
                 query.storetypeid = query.storetypeid.toString();
@@ -778,7 +785,7 @@ app.get('/getStoreTypeMaster', async (req, res) => {
             // const newUsers = await NewUser.find(query || {});
 
 
-           
+
 
             // Custom serialization function to handle BigInt values
             const serialize = (data) => {
@@ -853,8 +860,8 @@ app.get('/getStoreMaster', async (req, res) => {
             const master = await Master.find(query);
             const storeTypeMaster = await StoreTypeMaster.find(query || {});
 
-             // Convert BigInt values to strings
-             if (query && query.storemasterid && typeof query.storemasterid === 'bigint') {
+            // Convert BigInt values to strings
+            if (query && query.storemasterid && typeof query.storemasterid === 'bigint') {
                 query.storemasterid = query.storemasterid.toString();
             }
 
@@ -885,8 +892,8 @@ app.get('/getStoreMaster', async (req, res) => {
                 return sObject;
                 // return mergedObject;
             });
-             // Custom serialization function to handle BigInt values
-             const serialize = (data) => {
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
                 return JSON.stringify(data, (key, value) => {
                     if (typeof value === 'bigint') {
                         return value.toString();

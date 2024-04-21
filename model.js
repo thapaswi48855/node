@@ -49,7 +49,7 @@ const roleSchema = new mongoose.Schema({
 })
 
 const assigneByPermissions = new mongoose.Schema({
-    assignepermissionid:String,
+    assignepermissionid:BigInt,
     roleid: Object,
     rolename: String,
     moduleid: Object,
@@ -70,7 +70,7 @@ const assigneByPermissions = new mongoose.Schema({
 })
 
 const newUserSchema = new mongoose.Schema({
-    userid:String,
+    userid:BigInt,
     userRoleid: String,
     userName: String,
     userPhno: String,

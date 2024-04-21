@@ -198,14 +198,24 @@ app.get('/getModules', async (req, res) => {
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const Module = require('./model.js').Module;
 
-        if (req.query) {
-            const module = await Module.find(req.query);
-            res.json({ data: module });
-        } else {
-            const module = await Module.find();
-            // Send the fetched documents as a JSON response
-            res.json({ data: module });
+        // if (req.query) {
+        //     const module = await Module.find(req.query);
+        //     res.json({ data: module });
+        // } else {
+        //     const module = await Module.find();
+        //     // Send the fetched documents as a JSON response
+        //     res.json({ data: module });
+        // }
+
+        let query = req.query;
+        // Convert BigInt values to strings
+        if (query && query.moduleId && typeof query.moduleId === 'bigint') {
+            query.moduleId = query.moduleId.toString();
         }
+
+        const modules = await Module.find(query || {});
+
+        res.json({ data: modules });
 
     } catch (error) {
         // Handle any errors that may occur during the database query

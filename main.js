@@ -717,6 +717,7 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
             } else {
     
                 const componentId = 'Store Type';
+                console.log('maxStoreTypeid','1')
                 const result = await storeTypeMaster.aggregate([
                     { $group: { _id: null, maxStoreTypeid: { $max: '$storetypeid' } } }
                 ]).exec();

@@ -127,7 +127,7 @@ app.get('/documents', async (req, res) => {
         // console.log('documents', await Document.find({}))  
         // res.json({ 'oj2': 'ok' })
         // Assuming you have a "Teacher" model defined in your './model.js' file
-
+        const Document = require('./model.js').Document;
         // if (req.query) {
 
         //     const documents =await Document.find(req.query);
@@ -135,10 +135,32 @@ app.get('/documents', async (req, res) => {
         //     res.json({ data: documents });
         // } else {
         // console.log(await Document.find({}));
-        const documents = await Document.find({});
+        // const documents = await Document.find({});
         // // res.json({ 'oj2': 'ok' })
-        res.json({ data: documents });
+        // res.json({ data: documents });
         // }
+          // const modules = await Module.find(query || {});
+          let query = req.query;
+          // Convert BigInt values to strings
+          if (query && query.documentid && typeof query.documentid === 'bigint') {
+              query.documentid = query.documentid.toString();
+          }
+  
+          const documents = await Document.find(query || {});
+  
+          // Custom serialization function to handle BigInt values
+          const serialize = (data) => {
+              return JSON.stringify(data, (key, value) => {
+                  if (typeof value === 'bigint') {
+                      return value.toString();
+                  }
+                  return value;
+              });
+          };
+  
+          // Serialize the response data
+          const serializedDocuments = serialize({ data: documents });
+          res.send(serializedDocuments);
 
     } catch (error) {
         // res.json({ 'oj3': 'ok' })
@@ -223,27 +245,30 @@ app.get('/getModules', async (req, res) => {
 
 
         // const modules = await Module.find(query || {});
-
         let query = req.query;
-
-        // Convert BigInt values to strings in the query
-        if (query && query.moduleId && typeof query.moduleId === 'bigint') {
-            query.moduleId = query.moduleId.toString();
+        // Convert BigInt values to strings
+        if (query && query.moduleid && typeof query.moduleid === 'bigint') {
+            query.moduleid = query.moduleid.toString();
         }
 
-        // Fetch documents from MongoDB
-        let modules = await Module.find(query || {});
+        const modules = await Module.find(query || {});
 
-        // Convert BigInt values to strings in the fetched documents
-        modules = modules.map(module => {
-            if (module.moduleId && typeof module.moduleId === 'bigint') {
-                module.moduleId = module.moduleId.toString();
-            }
-            return module;
-        });
+        // Custom serialization function to handle BigInt values
+        const serialize = (data) => {
+            return JSON.stringify(data, (key, value) => {
+                if (typeof value === 'bigint') {
+                    return value.toString();
+                }
+                return value;
+            });
+        };
 
-
-        res.json({ data: modules });
+        // Serialize the response data
+        const serializedModules = serialize({ data: modules });
+console.log('serializedModules',serializedModules)
+        // Send the serialized data as the response
+        res.send(serializedModules);
+        // res.json({ data: sanitizedModules });
 
     } catch (error) {
         // Handle any errors that may occur during the database query
@@ -303,13 +328,36 @@ app.get('/getModuleDocuments', async (req, res) => {
         const ModuleDocument = require('./model.js').ModuleDocument;
         console.log('req.query', req.query)
 
-        if (req.query) {
-            const moduleDocument = await ModuleDocument.find(req.query);
-            res.json({ data: moduleDocument });
-        } else {
-            const moduleDocument = await ModuleDocument.find();
-            res.json({ data: moduleDocument });
+        // if (req.query) {
+        //     const moduleDocument = await ModuleDocument.find(req.query);
+        //     res.json({ data: moduleDocument });
+        // } else {
+        //     const moduleDocument = await ModuleDocument.find();
+        //     res.json({ data: moduleDocument });
+        // }
+
+        // const modules = await Module.find(query || {});
+        let query = req.query;
+        // Convert BigInt values to strings
+        if (query && query.moduledocMapid && typeof query.moduledocMapid === 'bigint') {
+            query.moduledocMapid = query.moduledocMapid.toString();
         }
+
+        const moduleDocument = await ModuleDocument.find(query || {});
+
+        // Custom serialization function to handle BigInt values
+        const serialize = (data) => {
+            return JSON.stringify(data, (key, value) => {
+                if (typeof value === 'bigint') {
+                    return value.toString();
+                }
+                return value;
+            });
+        };
+
+        // Serialize the response data
+        const serializedDocuments = serialize({ data: moduleDocument });
+        res.send(serializedDocuments);
 
     } catch (error) {
         // Handle any errors that may occur during the database query
@@ -412,14 +460,14 @@ app.get('/getAssigneByPermissions', async (req, res) => {
 })
 
 app.post('/insertAssigneByPermissions', async (req, res) => {
-    const componentId = 'Assigne By Permissions';
-    let counter = counters.get(componentId) || 0;
-    counter += 1;
-    counters.set(componentId, counter);
-    // res.json(counter);
-    req.body[0].assignepermissionid = counter
+    // const componentId = 'Assigne By Permissions';
+    // let counter = counters.get(componentId) || 0;
+    // counter += 1;
+    // counters.set(componentId, counter);
+    // // res.json(counter);
+    // req.body[0].assignepermissionid = counter
 
-    onCommonPost(req, res, AssigneByPermissions);
+    // onCommonPost(req, res, AssigneByPermissions);
     // console.log('Insert Asigments')
     // try {
     //     console.log('Insert Document')
@@ -437,6 +485,38 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
     // } catch (error) {
     //     console.log('Update Error')
     // }
+
+    try {
+        if (req.body[0].assignepermissionid != 0) {
+            req.body[0].modifydt = new Date();
+            await Document.updateOne({ assignepermissionid: { $eq: req.body[0].assignepermissionid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+
+            const componentId = 'Assigne By Permissions';
+            const result = await Module.aggregate([
+                { $group: { _id: '$assignepermissionid', maxAssignepermissionid: { $max: '$assignepermissionid' } } }
+            ]).exec();
+            if (result.length > 0) {
+                highestAssignepermissionid = result[0].maxAssignepermissionid || 0;
+            } else {
+                highestAssignepermissionid = 0;
+            }
+            let counter = Math.max(counters.get(componentId) || 0, highestAssignepermissionid) + 1;
+
+            counters.set(componentId, counter);
+            req.body[0].assignepermissionid = counter;
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await AssigneByPermissions.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 

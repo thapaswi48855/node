@@ -321,14 +321,14 @@ app.post('/insertModule', async (req, res) => {
         } else {
             // If moduleid is 0, insert a new record
             const componentId = 'Module';
-            
+
             // Find the highest moduleid in the collection
             const result = await Module.aggregate([
                 { $group: { _id: null, maxModuleId: { $max: '$moduleid' } } }
             ]).exec();
-            
+
             let counter = (result[0] && result[0].maxModuleId) ? result[0].maxModuleId + 1 : 1;
-    
+
             req.body[0].moduleid = counter;
             req.body[0].createdt = new Date();
             await Module.insertMany(req.body);
@@ -433,8 +433,28 @@ app.post('/insertModuleDocuments', async (req, res) => {
 app.get('/getRoles', async (req, res) => {
 
     try {
-        const roles = await Roles.find();
-        res.json({ data: roles });
+        const Roles = await Roles.find();
+        // res.json({ data: roles });
+        let query = req.query;
+        // Convert BigInt values to strings
+        if (query && query.roleid && typeof query.roleid === 'bigint') {
+            query.roleid = query.roleid.toString();
+        }
+
+        const roles = await Roles.find(query || {});
+
+        // Custom serialization function to handle BigInt values
+        const serialize = (data) => {
+            return JSON.stringify(data, (key, value) => {
+                if (typeof value === 'bigint') {
+                    return value.toString();
+                }
+                return value;
+            });
+        };
+        // Serialize the response data
+        const serializedDocuments = serialize({ data: roles });
+        res.send(serializedDocuments);
 
     } catch (error) {
         // Handle any errors that may occur during the database query

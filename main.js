@@ -285,35 +285,61 @@ app.post('/insertModule', async (req, res) => {
     // // res.json(counter);
     // req.body[0].moduleid = counter
     // onCommonPost(req, res, Module);
+    // try {
+    //     if (req.body[0].moduleid != 0) {
+    //         req.body[0].modifydt = new Date();
+    //         await Module.updateOne({ moduleid: { $eq: req.body[0].moduleid } }, {
+    //             $set: req.body[0]
+    //         });
+    //         res.json({ status: "200", message: 'Update Successfull' });
+    //     } else {
+
+    //         const componentId = 'Module';
+    //         const result = await Module.aggregate([
+    //             { $group: { _id: '$moduleid', maxModuleId: { $max: '$moduleid' } } }
+    //         ]).exec();
+    //         if (result.length > 0) {
+    //             highestModuleId = result[0].maxModuleId || 0;
+    //         } else {
+    //             highestModuleId = 0;
+    //         }
+    //         let counter = Math.max(counters.get(componentId) || 0, highestModuleId) + 1;
+
+    //         counters.set(componentId, counter);
+    //         req.body[0].moduleid = counter;
+    //         const currentdt = new Date();
+    //         req.body[0].createdt = currentdt;
+    //         await Module.insertMany(req.body);
+    //         res.json({ status: "200", message: 'Create Successfull' });
+    //     }
+    // } catch (error) {
+    //     console.log('Update Error')
+    //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    // }
     try {
-        if (req.body[0].moduleid != 0) {
+        if (req.body[0].moduleid !== 0) {
+            // If moduleid is not 0, update the existing record
             req.body[0].modifydt = new Date();
-            await Module.updateOne({ moduleid: { $eq: req.body[0].moduleid } }, {
-                $set: req.body[0]
-            });
-            res.json({ status: "200", message: 'Update Successfull' });
+            await Module.updateOne({ moduleid: req.body[0].moduleid }, { $set: req.body[0] });
+            res.json({ status: "200", message: 'Update Successful' });
         } else {
-
+            // If moduleid is 0, insert a new record
             const componentId = 'Module';
+            
+            // Find the highest moduleid in the collection
             const result = await Module.aggregate([
-                { $group: { _id: '$moduleid', maxModuleId: { $max: '$moduleid' } } }
+                { $group: { _id: null, maxModuleId: { $max: '$moduleid' } } }
             ]).exec();
-            if (result.length > 0) {
-                highestModuleId = result[0].maxModuleId || 0;
-            } else {
-                highestModuleId = 0;
-            }
-            let counter = Math.max(counters.get(componentId) || 0, highestModuleId) + 1;
-
-            counters.set(componentId, counter);
+            
+            let counter = (result[0] && result[0].maxModuleId) ? result[0].maxModuleId + 1 : 1;
+    
             req.body[0].moduleid = counter;
-            const currentdt = new Date();
-            req.body[0].createdt = currentdt;
+            req.body[0].createdt = new Date();
             await Module.insertMany(req.body);
-            res.json({ status: "200", message: 'Create Successfull' });
+            res.json({ status: "200", message: 'Create Successful' });
         }
     } catch (error) {
-        console.log('Update Error')
+        console.log('Error:', error);
         res.status(500).json({ status: "500", message: 'Error', error: error.message });
     }
 })

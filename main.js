@@ -831,7 +831,7 @@ app.post('/insertStoreMaster', async (req, res) => {
 
             let counter = (result[0] && result[0].maxStoreMasterId) ? result[0].maxStoreMasterId + 1 : 1;
 
-            counters.set(componentId, counter);
+            // counters.set(componentId, counter);
             req.body[0].storemasterid = counter
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
@@ -1021,7 +1021,7 @@ app.post('/insertAddItemCategory', async (req, res) => {
 
             let counter = (result[0] && result[0].maxAddCategoryId) ? result[0].maxAddCategoryId + 1 : 1;
 
-            counters.set(componentId, counter);
+            // counters.set(componentId, counter);
             req.body[0].addcategoryid = counter
             const currentdt = new Date();
             req.body[0].createdt = currentdt;

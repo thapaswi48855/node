@@ -62,6 +62,7 @@ const uomCreationSchema = new mongoose.Schema({
 })
 
 const addItemCategorySchema = new mongoose.Schema({
+    addcategoryid:BigInt,
     categoryName: String,
     identification: String,
     issuseType:String,

@@ -728,9 +728,9 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
                 const result = await storeTypeMaster.aggregate([
                     { $group: { _id: null, maxStoreTypeId: { $max: '$storetypeid' } } }
                 ]).exec();
-                console.log('result[0]',result[0])
+
                 let counter = (result[0] && result[0].maxStoreTypeId) ? result[0].maxStoreTypeId + 1 : 1;
-console.log('counter',counter)
+
                 // counters.set(componentId, counter);
                 req.body[0].storetypeid = counter;
                 const currentdt = new Date();
@@ -1004,26 +1004,34 @@ app.get('/getUomCreation', async (req, res) => {
 })
 
 app.post('/insertAddItemCategory', async (req, res) => {
-    onCommonPost(req, res, addItemCategory);
-    console.log('Insert Asigments')
-    // try {
-    //     console.log('Insert Document', req.body)
-    //     if (req.body[0] && req.body[0]._id) {
-    //         console.log('Insert Document 1')
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         req.body[0].modifydt = new Date();
-    //         await addItemCategory.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         console.log('req.body', req.body)
-    //         req.body[0].createdt = new Date();
-    //         await addItemCategory.insertMany(req.body);
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    // }
+    // onCommonPost(req, res, addItemCategory);
+    // console.log('Insert Asigments')
+    try {
+        if (req.body[0].addcategoryid != 0) {
+            req.body[0].modifydt = new Date();
+            await addItemCategory.updateOne({ addcategoryid: { $eq: req.body[0].addcategoryid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const componentId = 'Add Item Category';
+            const result = await addItemCategory.aggregate([
+                { $group: { _id: null, maxAddCategoryId: { $max: '$addcategoryid' } } }
+            ]).exec();
+
+            let counter = (result[0] && result[0].maxAddCategoryId) ? result[0].maxAddCategoryId + 1 : 1;
+
+            counters.set(componentId, counter);
+            req.body[0].addcategoryid = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await addItemCategory.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.get('/getAddItemCategory', async (req, res) => {
@@ -1034,9 +1042,14 @@ app.get('/getAddItemCategory', async (req, res) => {
         const Master = require('./masters.js').master;
 
         if (req.query) {
-            const addItemCategory = await AddItemCategory.find(req.query);
+            let query = req.query;
+            const addItemCategory = await AddItemCategory.find(query || {});
+            const master = await Master.find(rquery);
 
-            const master = await Master.find(req.query);
+            // Convert BigInt values to strings
+            if (query && query.addcategoryid && typeof query.addcategoryid === 'bigint') {
+                query.addcategoryid = query.addcategoryid.toString();
+            }
 
             const result = addItemCategory.map(sObject => {
                 const storeKeys = ['identification', 'issuseType', 'bilable', 'retilable', 'calmiable',
@@ -1070,8 +1083,20 @@ app.get('/getAddItemCategory', async (req, res) => {
 
                 // return mergedObject;
             });
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
 
-            res.json({ data: result });
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: result });
+            res.send(serializedDocuments);
+            // res.json({ data: result });
         }
         else {
             console.log('GET')

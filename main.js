@@ -195,7 +195,7 @@ app.post('/insertDocuments', async (req, res) => {
 
             let counter = (result[0] && result[0].maxDocumentId) ? result[0].maxDocumentId + 1 : 1;
 
-            counters.set(componentId, counter);
+            // counters.set(componentId, counter);
             req.body[0].documentid = counter;
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
@@ -412,7 +412,7 @@ app.post('/insertModuleDocuments', async (req, res) => {
 
             let counter = (result[0] && result[0].maxModuleDocMapId) ? result[0].maxModuleDocMapId + 1 : 1;
 
-            counters.set(componentId, counter);
+            // counters.set(componentId, counter);
             req.body[0].moduledocMapid = counter;
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
@@ -563,7 +563,7 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
 
             let counter = (result[0] && result[0].maxAssignepermissionid) ? result[0].maxAssignepermissionid + 1 : 1;
 
-            counters.set(componentId, counter);
+            // counters.set(componentId, counter);
             req.body[0].assignepermissionid = counter;
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
@@ -621,7 +621,7 @@ app.post('/insertNewUsers', async (req, res) => {
 
             let counter = (result[0] && result[0].maxUserid) ? result[0].maxUserid + 1 : 1;
 
-            counters.set(componentId, counter);
+            // counters.set(componentId, counter);
             req.body[0].Userid = counter;
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
@@ -720,11 +720,11 @@ app.post('/insertStoreTypeMaster', async (req, res) => {
                 console.log('maxStoreTypeid','1')
                 const result = await storeTypeMaster.aggregate([
                     { $group: { _id: null, maxStoreTypeid: { $max: '$storetypeid' } } }
-                ]).exec();
+                ]);
     console.log('maxStoreTypeid',maxStoreTypeid)
                 let counter = (result[0] && result[0].maxStoreTypeid) ? result[0].maxStoreTypeid + 1 : 1;
     
-                counters.set(componentId, counter);
+                // counters.set(componentId, counter);
                 req.body[0].storetypeid = counter;
                 const currentdt = new Date();
                 req.body[0].createdt = currentdt;

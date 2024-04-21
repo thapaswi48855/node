@@ -288,7 +288,7 @@ app.post('/insertModule', async (req, res) => {
     try {
         if (req.body[0].moduleid != 0) {
             req.body[0].modifydt = new Date();
-            await Document.updateOne({ moduleid: { $eq: req.body[0].moduleid } }, {
+            await Module.updateOne({ moduleid: { $eq: req.body[0].moduleid } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });
@@ -377,14 +377,14 @@ app.post('/insertModuleDocuments', async (req, res) => {
     try {
         if (req.body[0].moduledocMapid != 0) {
             req.body[0].modifydt = new Date();
-            await Document.updateOne({ moduledocMapid: { $eq: req.body[0].moduledocMapid } }, {
+            await ModuleDocument.updateOne({ moduledocMapid: { $eq: req.body[0].moduledocMapid } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
 
             const componentId = 'Module Document';
-            const result = await Module.aggregate([
+            const result = await ModuleDocument.aggregate([
                 { $group: { _id: '$moduledocMapid', maxModuleDocMapId: { $max: '$moduledocMapid' } } }
             ]).exec();
             if (result.length > 0) {
@@ -398,7 +398,7 @@ app.post('/insertModuleDocuments', async (req, res) => {
             req.body[0].moduledocMapid = counter;
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
-            await Module.insertMany(req.body);
+            await ModuleDocument.insertMany(req.body);
             res.json({ status: "200", message: 'Create Successfull' });
         }
     } catch (error) {

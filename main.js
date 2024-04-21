@@ -139,28 +139,28 @@ app.get('/documents', async (req, res) => {
         // // res.json({ 'oj2': 'ok' })
         // res.json({ data: documents });
         // }
-          // const modules = await Module.find(query || {});
-          let query = req.query;
-          // Convert BigInt values to strings
-          if (query && query.documentid && typeof query.documentid === 'bigint') {
-              query.documentid = query.documentid.toString();
-          }
-  
-          const documents = await Document.find(query || {});
-  
-          // Custom serialization function to handle BigInt values
-          const serialize = (data) => {
-              return JSON.stringify(data, (key, value) => {
-                  if (typeof value === 'bigint') {
-                      return value.toString();
-                  }
-                  return value;
-              });
-          };
-  
-          // Serialize the response data
-          const serializedDocuments = serialize({ data: documents });
-          res.send(serializedDocuments);
+        // const modules = await Module.find(query || {});
+        let query = req.query;
+        // Convert BigInt values to strings
+        if (query && query.documentid && typeof query.documentid === 'bigint') {
+            query.documentid = query.documentid.toString();
+        }
+
+        const documents = await Document.find(query || {});
+
+        // Custom serialization function to handle BigInt values
+        const serialize = (data) => {
+            return JSON.stringify(data, (key, value) => {
+                if (typeof value === 'bigint') {
+                    return value.toString();
+                }
+                return value;
+            });
+        };
+
+        // Serialize the response data
+        const serializedDocuments = serialize({ data: documents });
+        res.send(serializedDocuments);
 
     } catch (error) {
         // res.json({ 'oj3': 'ok' })
@@ -265,7 +265,7 @@ app.get('/getModules', async (req, res) => {
 
         // Serialize the response data
         const serializedModules = serialize({ data: modules });
-console.log('serializedModules',serializedModules)
+        console.log('serializedModules', serializedModules)
         // Send the serialized data as the response
         res.send(serializedModules);
         // res.json({ data: sanitizedModules });
@@ -440,16 +440,39 @@ app.get('/getAssigneByPermissions', async (req, res) => {
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const AssigneByPermissions = require('./model.js').AssigneByPermissions;
         console.log('req.query', req.query)
-
+        // try {
         if (req.query) {
-            const assigneByPermissions = await AssigneByPermissions.find(req.query);
-            res.json({ data: assigneByPermissions, status: "200", message: 'Succes' });
-            // res.json({ status: "200", message: 'Succes' });
-        } else {
-            console.log('GET')
-            const assigneByPermissions = await AssigneByPermissions.find();
-            res.json({ data: assigneByPermissions, status: "200", message: 'Succes' });
-            res.json({ status: "200", message: 'Succes' });
+            //     const assigneByPermissions = await AssigneByPermissions.find(req.query);
+            //     res.json({ data: assigneByPermissions, status: "200", message: 'Succes' });
+            //     // res.json({ status: "200", message: 'Succes' });
+            // } else {
+            //     console.log('GET')
+            //     const assigneByPermissions = await AssigneByPermissions.find();
+            //     res.json({ data: assigneByPermissions, status: "200", message: 'Succes' });
+            //     res.json({ status: "200", message: 'Succes' });
+            // }
+            // const modules = await Module.find(query || {});
+            let query = req.query;
+            // Convert BigInt values to strings
+            if (query && query.assignepermissionid && typeof query.assignepermissionid === 'bigint') {
+                query.assignepermissionid = query.assignepermissionid.toString();
+            }
+
+            const assigneByPermissions = await AssigneByPermissions.find(query || {});
+
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: assigneByPermissions });
+            res.send(serializedDocuments);
         }
 
     } catch (error) {
@@ -489,14 +512,14 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
     try {
         if (req.body[0].assignepermissionid != 0) {
             req.body[0].modifydt = new Date();
-            await Document.updateOne({ assignepermissionid: { $eq: req.body[0].assignepermissionid } }, {
+            await AssigneByPermissions.updateOne({ assignepermissionid: { $eq: req.body[0].assignepermissionid } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
 
             const componentId = 'Assigne By Permissions';
-            const result = await Module.aggregate([
+            const result = await AssigneByPermissions.aggregate([
                 { $group: { _id: '$assignepermissionid', maxAssignepermissionid: { $max: '$assignepermissionid' } } }
             ]).exec();
             if (result.length > 0) {
@@ -521,13 +544,13 @@ app.post('/insertAssigneByPermissions', async (req, res) => {
 
 
 app.post('/insertNewUsers', async (req, res) => {
-    const componentId = 'New User';
-    let counter = counters.get(componentId) || 0;
-    counter += 1;
-    counters.set(componentId, counter);
-    // res.json(counter);
-    req.body[0].userid = counter
-    onCommonPost(req, res, newUser);
+    // const componentId = 'New User';
+    // let counter = counters.get(componentId) || 0;
+    // counter += 1;
+    // counters.set(componentId, counter);
+    // // res.json(counter);
+    // req.body[0].userid = counter
+    // onCommonPost(req, res, newUser);
     // try {
     //     if (req.body[0] && req.body[0]._id) {
     //         const id = req.body[0]._id
@@ -547,6 +570,38 @@ app.post('/insertNewUsers', async (req, res) => {
     //     console.log('Update Error')
     //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
     // }
+
+    try {
+        if (req.body[0].userid != 0) {
+            req.body[0].modifydt = new Date();
+            await newUser.updateOne({ userid: { $eq: req.body[0].userid } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+
+            const componentId = 'New User';
+            const result = await newUser.aggregate([
+                { $group: { _id: '$auserid', maxUserid: { $max: '$userid' } } }
+            ]).exec();
+            if (result.length > 0) {
+                highestUserid = result[0].maxUserid || 0;
+            } else {
+                highestUserid = 0;
+            }
+            let counter = Math.max(counters.get(componentId) || 0, highestUserid) + 1;
+
+            counters.set(componentId, counter);
+            req.body[0].Userid = counter;
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await newUser.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.get('/getNewUsers', async (req, res) => {
@@ -557,13 +612,34 @@ app.get('/getNewUsers', async (req, res) => {
         console.log('req.query', req.query)
 
         if (req.query) {
-            const newUser = await NewUser.find(req.query);
-            console.log('newUser', newUser)
-            if (newUser.length > 0) {
-                res.json({ data: newUser, status: "200", message: 'Succes' });
-            } else {
-                res.json({ data: newUser, status: "404", message: 'Unble to Login' });
+            // const NewUser = await NewUser.find(req.query);
+            // console.log('newUser', newUser)
+            // if (newUser.length > 0) {
+            //     res.json({ data: newUser, status: "200", message: 'Succes' });
+            // } else {
+            //     res.json({ data: newUser, status: "404", message: 'Unble to Login' });
+            // }
+            let query = req.query;
+            // Convert BigInt values to strings
+            if (query && query.Userid && typeof query.Userid === 'bigint') {
+                query.Userid = query.Userid.toString();
             }
+
+            const newUsers = await NewUser.find(query || {});
+
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: newUsers });
+            res.send(serializedDocuments);
 
         } else {
             console.log('GET')

@@ -919,26 +919,34 @@ app.get('/getStoreMaster', async (req, res) => {
 })
 
 app.post('/insertUomCreation', async (req, res) => {
-    onCommonPost(req, res, uomCreation);
-    console.log('Insert Asigments')
-    // try {
-    //     console.log('Insert Document', req.body)
-    //     if (req.body[0] && req.body[0]._id) {
-    //         console.log('Insert Document 1')
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         req.body[0].modifydt = new Date();
-    //         await uomCreation.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         console.log('req.body', req.body)
-    //         req.body[0].createdt = new Date();
-    //         await uomCreation.insertMany(req.body);
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    // }
+    // onCommonPost(req, res, uomCreation);
+    // console.log('Insert Asigments')
+    try {
+        if (req.body[0].uomCreationId != 0) {
+            req.body[0].modifydt = new Date();
+            await uomCreation.updateOne({ uomCreationId: { $eq: req.body[0].uomCreationId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const componentId = 'Add Item Category';
+            const result = await uomCreation.aggregate([
+                { $group: { _id: null, maxUomCreationId: { $max: '$uomCreationId' } } }
+            ]).exec();
+
+            let counter = (result[0] && result[0].maxUomCreationId) ? result[0].maxUomCreationId + 1 : 1;
+
+            // counters.set(componentId, counter);
+            req.body[0].uomCreationId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await uomCreation.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.get('/getUomCreation', async (req, res) => {
@@ -961,10 +969,16 @@ app.get('/getUomCreation', async (req, res) => {
         // const StoreTypeMaster = require('./store.js').storeTypeMaster;
 
         if (req.query) {
+            let query = req.query;
             // const UomCreation = require('./store.js').uomCreation;
-            const uomCreation = await UomCreation.find(req.query);
-            const master = await Master.find(req.query);
+            const uomCreation = await UomCreation.find(query);
+            const master = await Master.find(query);
             // const storeTypeMaster = await StoreTypeMaster.find(req.query);
+
+             // Convert BigInt values to strings
+             if (query && query.uomCreationId && typeof query.uomCreationId === 'bigint') {
+                query.uomCreationId = query.uomCreationId.toString();
+            }
 
             const result = uomCreation.map(sObject => {
                 const storeKeys = ['status', 'unitUom'];
@@ -989,7 +1003,20 @@ app.get('/getUomCreation', async (req, res) => {
 
                 // return mergedObject;
             });
-            res.json({ data: result });
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: result });
+            res.send(serializedDocuments);
+
+            // res.json({ data: result });
         } else {
 
             const uomCreation = await UomCreation.find();

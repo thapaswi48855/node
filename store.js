@@ -50,6 +50,7 @@ const storeMasterSchema= new mongoose.Schema({
 })
 
 const uomCreationSchema = new mongoose.Schema({
+    uomCreationId:BigInt,
     packageUom: String,
     unitUom: String,
     pkgSize: String,

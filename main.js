@@ -1079,29 +1079,17 @@ app.get('/getAddItemCategory', async (req, res) => {
             }
 
             const result = addItemCategory.map(sObject => {
-                const storeKeys = ['identification', 'issuseType', 'bilable', 'retilable', 'calmiable',
+                const storeKeys = ['identification', 'issuseType', 'bilable', 'retilable', 'calmiable','validateExpireDate',
                     'assestsTracking', 'prescribable',
                     'status', 'drug'];
                 const mergedObject = { ...sObject.toObject() };
 
-                // _.forEach(storeKeys, (status) => {
-                //     const matchingObject = master.find(obj => obj._id.toString() === sObject[status].toString());
-
-                //     if (matchingObject) {
-                //         sObject[status] = matchingObject.mastername
-                //     }
-                // });
                 _.forEach(storeKeys, (status) => {
                     const matchingObject = master.reduce((found, subMaster) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    // const matchStore = storeTypeMaster.find(obj => obj._id.toString() === sObject['storeType'].toString());
-                    // if (matchStore) {
-                    //     console.log('matchStore.storetypename', matchStore.storetypename)
-                    //     sObject['storeType'] = matchStore.storetypename;
-                    // }
-
+                    
                     if (matchingObject) {
                         sObject[status] = matchingObject.subMasterName;
                     }
@@ -1239,26 +1227,34 @@ app.get('/getGenericClassificationDetails', async (req, res) => {
 })
 
 app.post('/insertGenericSubClassificationDetails', async (req, res) => {
-    onCommonPost(req, res, genericSubClassification);
-    console.log('Insert Asigments')
-    // try {
-    //     console.log('Insert Document', req.body)
-    //     if (req.body[0] && req.body[0]._id) {
-    //         console.log('Insert Document 1')
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         req.body[0].modifydt = new Date();
-    //         await genericSubClassification.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         console.log('req.body', req.body)
-    //         req.body[0].createdt = new Date();
-    //         await genericSubClassification.insertMany(req.body);
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    // }
+    // onCommonPost(req, res, genericSubClassification);
+    // console.log('Insert Asigments')
+    try {
+        if (req.body[0].genSubClasiId != 0) {
+            req.body[0].modifydt = new Date();
+            await genericSubClassification.updateOne({ genSubClasiId: { $eq: req.body[0].genSubClasiId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const componentId = 'Add Item Category';
+            const result = await genericSubClassification.aggregate([
+                { $group: { _id: null, maxGenSubClasiId: { $max: '$genSubClasiId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxUomCreationId)
+            let counter = (result[0] && result[0].maxGenSubClasiId) ? result[0].maxGenSubClasiId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].genSubClasiId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await genericSubClassification.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.get('/getGenericSubClassificationDetails', async (req, res) => {
@@ -1269,9 +1265,15 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
         const GenericClassification = require('./store.js').genericClassification;
 
         if (req.query) {
-            const genericSubClassification = await GenericSubClassification.find(req.query);
-            const master = await Master.find(req.query);
-            const genericClassification = await GenericClassification.find(req.query);
+            let query = req.query;
+            const genericSubClassification = await GenericSubClassification.find(query);
+            const master = await Master.find(query);
+            const genericClassification = await GenericClassification.find(query);
+
+              // Convert BigInt values to strings
+              if (query && query.genSubClasiId && typeof query.genSubClasiId === 'bigint') {
+                query.genSubClasiId = query.genSubClasiId.toString();
+            }
 
             const result = genericSubClassification.map(sObject => {
                 const storeKeys = ['clasificationName', 'status'];
@@ -1292,7 +1294,19 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
                 });
                 return mergedObject;
             });
-            res.json({ data: result });
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: result });
+            res.send(serializedDocuments);
         } else {
             const genericSubClassification = await GenericSubClassification.find();
             res.json({ data: genericSubClassification });

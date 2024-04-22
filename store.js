@@ -95,6 +95,7 @@ const genericClassificationSchema = new mongoose.Schema({
 })
 
 const genericSubClassificationSchema = new mongoose.Schema({
+    genSubClasiId:BigInt,
     clasificationName:String,
     subClasificationName: String,
     subClasificationDesc: String,

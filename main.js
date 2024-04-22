@@ -933,9 +933,9 @@ app.post('/insertUomCreation', async (req, res) => {
             const result = await uomCreation.aggregate([
                 { $group: { _id: null, maxUomCreationId: { $max: '$uomCreationId' } } }
             ]).exec();
-
+            console.log('uomCreationId',result[0].maxUomCreationId)
             let counter = (result[0] && result[0].maxUomCreationId) ? result[0].maxUomCreationId + 1 : 1;
-
+console.log('uomCreationId',counter)
             // counters.set(componentId, counter);
             req.body[0].uomCreationId = counter
             const currentdt = new Date();

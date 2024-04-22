@@ -1276,7 +1276,7 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
             }
 
             const result = genericSubClassification.map(sObject => {
-                const storeKeys = ['genericClassificationId', 'status'];
+                const storeKeys = ['clasificationName', 'status'];
                 const mergedObject = { ...sObject.toObject() };
 
                 _.forEach(storeKeys, (status) => {
@@ -1284,9 +1284,9 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const genClass = genericClassification.find(obj => obj._id.toString() === sObject['genericClassificationId']);
+                    const genClass = genericClassification.find(obj => obj._id.toString() === sObject['clasificationName']);
                     if (genClass) {
-                        mergedObject['genericClassificationId'] = genClass.genericClassificationId;
+                        mergedObject['clasificationName'] = genClass.clasificationName;
                     }
                     if (matchingObject) {
                         mergedObject[status] = matchingObject.subMasterName

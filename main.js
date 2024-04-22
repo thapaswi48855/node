@@ -933,9 +933,9 @@ app.post('/insertUomCreation', async (req, res) => {
             const result = await uomCreation.aggregate([
                 { $group: { _id: null, maxUomCreationId: { $max: '$uomCreationId' } } }
             ]).exec();
-            console.log('uomCreationId',result[0].maxUomCreationId)
+            console.log('uomCreationId', result[0].maxUomCreationId)
             let counter = (result[0] && result[0].maxUomCreationId) ? result[0].maxUomCreationId + 1 : 1;
-console.log('uomCreationId',counter)
+            console.log('uomCreationId', counter)
             // counters.set(componentId, counter);
             req.body[0].uomCreationId = counter
             const currentdt = new Date();
@@ -975,8 +975,8 @@ app.get('/getUomCreation', async (req, res) => {
             const master = await Master.find(query);
             // const storeTypeMaster = await StoreTypeMaster.find(req.query);
 
-             // Convert BigInt values to strings
-             if (query && query.uomCreationId && typeof query.uomCreationId === 'bigint') {
+            // Convert BigInt values to strings
+            if (query && query.uomCreationId && typeof query.uomCreationId === 'bigint') {
                 query.uomCreationId = query.uomCreationId.toString();
             }
 
@@ -1139,32 +1139,40 @@ app.get('/getAddItemCategory', async (req, res) => {
 })
 
 app.post('/insertGenericClassificationDetails', async (req, res) => {
-    const componentId = 'Generic Classification Details';
-    let counter = counters.get(componentId) || 0;
-    counter += 1;
-    counters.set(componentId, counter);
-    // res.json(counter);
-    req.body[0].clasificationid = counter
-    onCommonPost(req, res, genericClassification);
-    console.log('clasif', req.body)
-    // try {
-    //     console.log('Insert Document', req.body)
-    //     if (req.body[0] && req.body[0]._id) {
-    //         console.log('Insert Document 1')
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         req.body[0].modifydt = new Date();
-    //         await genericClassification.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //     } else {
-    //         console.log('req.body', req.body)
-    //         req.body[0].createdt = new Date();
-    //         await genericClassification.insertMany(req.body);
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    // }
+    // const componentId = 'Generic Classification Details';
+    // let counter = counters.get(componentId) || 0;
+    // counter += 1;
+    // counters.set(componentId, counter);
+    // // res.json(counter);
+    // req.body[0].clasificationid = counter
+    // onCommonPost(req, res, genericClassification);
+    // console.log('clasif', req.body)
+    try {
+        if (req.body[0].genericClassificationId != 0) {
+            req.body[0].modifydt = new Date();
+            await genericClassification.updateOne({ genericClassificationId: { $eq: req.body[0].genericClassificationId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const componentId = 'Add Item Category';
+            const result = await genericClassification.aggregate([
+                { $group: { _id: null, maxGenericClassificationId: { $max: '$genericClassificationId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxUomCreationId)
+            let counter = (result[0] && result[0].maxGenericClassificationId) ? result[0].maxGenericClassificationId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].genericClassificationId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await genericClassification.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.get('/getGenericClassificationDetails', async (req, res) => {
@@ -1172,56 +1180,50 @@ app.get('/getGenericClassificationDetails', async (req, res) => {
     try {
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const GenericClassification = require('./store.js').genericClassification;
-        // console.log('req.query', req.query)
-
-        // if (req.query) {
-        //     const genericClassification = await GenericClassification.find(req.query);
-        //     res.json({ data: genericClassification });
-        // } else {
-        //     console.log('GET')
-        //     const genericClassification = await GenericClassification.find();
-        //     res.json({ data: genericClassification });
-        // }
         const Master = require('./masters.js').master;
 
         if (req.query) {
-            const genericClassification = await GenericClassification.find(req.query);
 
-            const master = await Master.find(req.query);
+            let query = req.query;
+            const genericClassification = await GenericClassification.find(query);
+            const master = await Master.find(query);
+
+            // Convert BigInt values to strings
+            if (query && query.genericClassificationId && typeof query.genericClassificationId === 'bigint') {
+                query.genericClassificationId = query.genericClassificationId.toString();
+            }
 
             const result = genericClassification.map(sObject => {
                 const storeKeys = [
                     'status',];
                 const mergedObject = { ...sObject.toObject() };
 
-                // _.forEach(storeKeys, (status) => {
-                //     const matchingObject = master.find(obj => obj._id.toString() === sObject[status].toString());
-
-                //     if (matchingObject) {
-                //         sObject[status] = matchingObject.mastername
-                //     }
-                // });
                 _.forEach(storeKeys, (status) => {
                     const matchingObject = master.reduce((found, subMaster) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    // const matchStore = storeTypeMaster.find(obj => obj._id.toString() === sObject['storeType'].toString());
-                    // if (matchStore) {
-                    //     console.log('matchStore.storetypename', matchStore.storetypename)
-                    //     sObject['storeType'] = matchStore.storetypename;
-                    // }
 
                     if (matchingObject) {
                         sObject[status] = matchingObject.subMasterName;
                     }
                 });
                 return sObject;
-
-                // return mergedObject;
             });
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
 
-            res.json({ data: result });
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: result });
+            res.send(serializedDocuments);
+            // res.json({ data: result });
         }
         else {
             console.log('GET')

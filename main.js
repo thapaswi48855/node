@@ -1284,7 +1284,7 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const genClass = genericClassification.find(obj => obj._id.toString() === sObject['clasificationName']);
+                    const genClass = genericClassification.find(obj => obj.genSubClasiId.toString() === sObject['clasificationName']);
                     if (genClass) {
                         mergedObject['clasificationName'] = genClass.clasificationName;
                     }
@@ -1381,8 +1381,8 @@ app.get('/getGenericDetails', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const genClass = genericClassification.find(obj => obj._id.toString() === sObject['clasificationName']);
-                    const genSubClass = genericSubClassification.find(obj => obj._id.toString() === sObject['subClassificationName'])
+                    const genClass = genericClassification.find(obj => obj.genericClassificationId.toString() === sObject['clasificationName']);
+                    const genSubClass = genericSubClassification.find(obj => obj.genSubClasiId.toString() === sObject['subClassificationName'])
                     // find(item => item._id.equals(sObject.subClassificationName));
                     if (genSubClass) {
                         console.log('genSubClass.subClasificationName', genSubClass.subClasificationName)

@@ -1278,13 +1278,13 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
             const result = genericSubClassification.map(sObject => {
                 const storeKeys = ['clasificationName', 'status'];
                 const mergedObject = { ...sObject.toObject() };
-
+console.log('sObject',sObject)
                 _.forEach(storeKeys, (status) => {
                     const matchingObject = master.reduce((found, subMaster) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const genClass = genericClassification.find(obj => obj.genSubClasiId.toString() === sObject['clasificationName']);
+                    const genClass = genericClassification.find(obj => obj.genSubClasiId === sObject['clasificationName']);
                     if (genClass) {
                         mergedObject['clasificationName'] = genClass.clasificationName;
                     }
@@ -1381,8 +1381,8 @@ app.get('/getGenericDetails', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const genClass = genericClassification.find(obj => obj.genericClassificationId.toString() === sObject['clasificationName']);
-                    const genSubClass = genericSubClassification.find(obj => obj.genSubClasiId.toString() === sObject['subClassificationName'])
+                    const genClass = genericClassification.find(obj => obj.genericClassificationId === sObject['clasificationName']);
+                    const genSubClass = genericSubClassification.find(obj => obj.genSubClasiId === sObject['subClassificationName'])
                     // find(item => item._id.equals(sObject.subClassificationName));
                     if (genSubClass) {
                         console.log('genSubClass.subClasificationName', genSubClass.subClasificationName)

@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
 const rasiePurchaseOrderSchema = new mongoose.Schema({
-    poNumber:String,
-    store: String,
-    department: String,
-    quantityUom: String,
+    poNumId:BigInt,
     supplier: String,
     supplierAdderss: String,
     poallowedTo: String,

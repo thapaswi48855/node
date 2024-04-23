@@ -1278,13 +1278,21 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
             const result = genericSubClassification.map(sObject => {
                 const storeKeys = ['clasificationName', 'status'];
                 const mergedObject = { ...sObject.toObject() };
-console.log('sObject',sObject)
+                // console.log('sObject',sObject)
                 _.forEach(storeKeys, (status) => {
                     const matchingObject = master.reduce((found, subMaster) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const genClass = genericClassification.find(obj => obj.genSubClasiId === sObject['clasificationName']);
+                    // console.log('genericClassification', typeof genericClassification.genericClassificationId)
+                    const genClass = genericClassification.find(obj => {
+                        if (obj && obj.genericClassificationId) {
+                            return obj.genericClassificationId.toString() === sObject['clasificationName'];
+                        }
+                        return false;
+                    }
+                    );
+
                     if (genClass) {
                         mergedObject['clasificationName'] = genClass.clasificationName;
                     }
@@ -1366,7 +1374,7 @@ app.get('/getGenericDetails', async (req, res) => {
             const genericClassification = await GenericClassification.find(query);
             const genericSubClassification = await GenericSubClassification.find(query);
 
-            
+
             // Convert BigInt values to strings
             if (query && query.generDetId && typeof query.generDetId === 'bigint') {
                 query.generDetId = query.generDetId.toString();
@@ -1381,9 +1389,26 @@ app.get('/getGenericDetails', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const genClass = genericClassification.find(obj => obj.genericClassificationId === sObject['clasificationName']);
-                    const genSubClass = genericSubClassification.find(obj => obj.genSubClasiId === sObject['subClassificationName'])
+                    const genClass = genericClassification.find(obj => {
+                        if (obj && obj.genericClassificationId) {
+                            return obj.genericClassificationId.toString() === sObject['clasificationName'];
+                        }
+                        return false;
+                    }
+                        // obj.genericClassificationId === sObject['clasificationName']
+                    );
+                    const genSubClass = genericSubClassification.find(obj => {
+
+                        if (obj && obj.genSubClasiId) {
+                            return obj.genSubClasiId.toString() === sObject['subClassificationName'];
+                        }
+                        return false;
+                    }
+
+                        // obj.genSubClasiId === sObject['subClassificationName']
+                    )
                     // find(item => item._id.equals(sObject.subClassificationName));
+                    console.log('genSubClass', genSubClass)
                     if (genSubClass) {
                         console.log('genSubClass.subClasificationName', genSubClass.subClasificationName)
                         mergedObject['subClassificationName'] = genSubClass.subClasificationName;
@@ -1467,14 +1492,14 @@ app.get('/getSupplierCategory', async (req, res) => {
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const SupplierCategory = require('./store.js').supplierCategory;
         const Master = require('./masters.js').master;
-       
+
         if (req.query) {
             let query = req.query;
             const supplierCategory = await SupplierCategory.find(query);
             const master = await Master.find(query);
 
-              // Convert BigInt values to strings
-              if (query && query.supplierCatId && typeof query.supplierCatId === 'bigint') {
+            // Convert BigInt values to strings
+            if (query && query.supplierCatId && typeof query.supplierCatId === 'bigint') {
                 query.supplierCatId = query.supplierCatId.toString();
             }
 
@@ -1564,11 +1589,11 @@ app.get('/getManufacureCreation', async (req, res) => {
             let query = req.query;
             const manufacureCreation = await ManufacureCreation.find(query);
             const master = await Master.find(query);
-          
-             // Convert BigInt values to strings
-             if (query && query.manufacureId && typeof query.manufacureId === 'bigint') {
+
+            // Convert BigInt values to strings
+            if (query && query.manufacureId && typeof query.manufacureId === 'bigint') {
                 query.manufacureId = query.manufacureId.toString();
-            } 
+            }
             const result = manufacureCreation.map(sObject => {
                 const storeKeys = ['status'];
                 const mergedObject = { ...sObject.toObject() };
@@ -1585,8 +1610,8 @@ app.get('/getManufacureCreation', async (req, res) => {
                 });
                 return sObject;
             });
-             // Custom serialization function to handle BigInt values
-             const serialize = (data) => {
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
                 return JSON.stringify(data, (key, value) => {
                     if (typeof value === 'bigint') {
                         return value.toString();
@@ -1598,7 +1623,7 @@ app.get('/getManufacureCreation', async (req, res) => {
             // Serialize the response data
             const serializedDocuments = serialize({ data: manufacureCreation });
             res.send(serializedDocuments);
-         
+
         } else {
             const manufacureCreation = await ManufacureCreation.find();
             res.json({ data: manufacureCreation });
@@ -1658,10 +1683,10 @@ app.get('/getSupplierDetails', async (req, res) => {
             const master = await Master.find(query);
             const supplierCategory = await SupplierCategory.find(query);
 
-             // Convert BigInt values to strings
-             if (query && query.supplierDetId && typeof query.supplierDetId === 'bigint') {
+            // Convert BigInt values to strings
+            if (query && query.supplierDetId && typeof query.supplierDetId === 'bigint') {
                 query.supplierDetId = query.supplierDetId.toString();
-            } 
+            }
             const result = supplierDetails.map(sObject => {
                 const storeKeys = ['supplierapplyTCSforPOStockEntry', 'status', 'registeredsupplier', 'supplierCategory'];
                 const mergedObject = { ...sObject.toObject() };
@@ -1832,11 +1857,11 @@ app.get('/getNewItem', async (req, res) => {
             const itemCategory = await AddItemCategory.find(query);
             const uomcreation = await UomCreation.find(query);
 
-            
-             // Convert BigInt values to strings
-             if (query && query.newItemId && typeof query.newItemId === 'bigint') {
+
+            // Convert BigInt values to strings
+            if (query && query.newItemId && typeof query.newItemId === 'bigint') {
                 query.newItemId = query.newItemId.toString();
-            } 
+            }
 
             const result = newItem.map(sObject => {
                 const storeKeys = ['status', 'category', 'strengthUnits', 'itemFrom', 'unitUOM', 'packageUOM', 'consumptionUOM',
@@ -1880,19 +1905,19 @@ app.get('/getNewItem', async (req, res) => {
                 });
                 return sObject;
             });
-           // Custom serialization function to handle BigInt values
-           const serialize = (data) => {
-            return JSON.stringify(data, (key, value) => {
-                if (typeof value === 'bigint') {
-                    return value.toString();
-                }
-                return value;
-            });
-        };
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
 
-        // Serialize the response data
-        const serializedDocuments = serialize({ data: result });
-        res.send(serializedDocuments);
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: result });
+            res.send(serializedDocuments);
         }
         else {
             console.log('GET')

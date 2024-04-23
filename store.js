@@ -107,6 +107,7 @@ const genericSubClassificationSchema = new mongoose.Schema({
 })
 
 const genericDetailsSchema = new mongoose.Schema({
+    generDetId:BigInt,
     genericName: String,
     clasificationName: String,
     subClassificationName:String,
@@ -120,6 +121,7 @@ const genericDetailsSchema = new mongoose.Schema({
 })
 
 const supplierCategorySchema = new mongoose.Schema({
+    supplierCatId:BigInt,
     categoryname: String,
     categorydescription: String,
     status:String,
@@ -130,6 +132,7 @@ const supplierCategorySchema = new mongoose.Schema({
 })
 
 const manufacureCreationSchema = new mongoose.Schema({
+    manufacureId:BigInt,
     manufacturename: String,
     status: String,
     manufacturecode: String,
@@ -150,6 +153,7 @@ const manufacureCreationSchema = new mongoose.Schema({
 })
 
 const supplierDetailsSchema = new mongoose.Schema({
+    supplierDetId:BigInt,
     supplierName:String,
     suppliercode:String,
     status:String,
@@ -181,6 +185,7 @@ const supplierDetailsSchema = new mongoose.Schema({
 })
 
 const newItemSchema = new mongoose.Schema({
+    newItemId:BigInt,
     itemName:String,
     shortName:String,
     status:String,

@@ -1961,12 +1961,14 @@ app.post('/insertRasiePurchaseOrderMaster', async (req, res) => {
     try {
         console.log('1')
         if (req.body[0].poNumId != 0) {
+            console.log('3')
             req.body[0].modifydt = new Date();
             await rasiePurchaseOrder.updateOne({ poNumId: { $eq: req.body[0].poNumId } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
+            console.log('2')
             const componentId = 'Add Item Category';
             const result = await rasiePurchaseOrder.aggregate([
                 { $group: { _id: null, maxPoNumId: { $max: '$poNumId' } } }

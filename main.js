@@ -1960,6 +1960,7 @@ app.post('/insertRasiePurchaseOrderMaster', async (req, res) => {
     // }
     try {
         console.log('1')
+        console.log('req.body[0].poNumId',req.body[0].poNumId)
         if (req.body[0].poNumId != 0) {
             console.log('3')
             req.body[0].modifydt = new Date();

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const rasiePurchaseOrderSchema = new mongoose.Schema({
-    poNumId:BigInt,
+    poNumId:String,
     supplier: String,
     supplierAdderss: String,
     poallowedTo: String,

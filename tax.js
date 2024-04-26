@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const taxGroupSchema = new mongoose.Schema({
+    taxGrpId:BigInt,
     taxgrouptype: String,
     taxgroup:String,
     taxgroupcode: String,
@@ -13,6 +14,7 @@ const taxGroupSchema = new mongoose.Schema({
 })
 
 const taxSubGroupSchema = new mongoose.Schema({
+    taxSubGrpId:BigInt,
     taxgroup: String,
     taxsubgroup:String,
     status: String,

@@ -2284,7 +2284,37 @@ app.get('/getServiceSubGroupMaster', async (req, res) => {
 
 // Tax  
 app.post('/insertTaxGroup', async (req, res) => {
-    onCommonPost(req, res, taxGroup)
+    // onCommonPost(req, res, taxGroup)
+    try {
+        if (req.body[0].taxGrpId != 0) {
+            console.log('3')
+            req.body[0].modifydt = new Date();
+            await taxGroup.updateOne({ taxGrpId: { $eq: req.body[0].taxGrpId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            console.log('Stock')
+            const componentId = 'Add Item Category';
+            const result = await taxGroup.aggregate([
+                { $group: { _id: null, maxTaxGrpId: { $max: '$taxGrpId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxPoNumId)
+            let counter = (result[0] && result[0].maxTaxGrpId) ? result[0].maxTaxGrpId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].taxGrpId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            // req.body[0]['poNumber'] = `POCS0${counter}`;
+            await taxGroup.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+            console.log('req.body', req.body)
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 app.get('/getTaxGroup', async (req, res) => {
     console.log('Get 1')
@@ -2296,9 +2326,15 @@ app.get('/getTaxGroup', async (req, res) => {
         const Master = require('./masters.js').master;
         // const serviceGroup = require('./service.js').serviceGroup;
         if (req.query) {
-            const taxGroup = await taxgroup.find(req.query);
-            const master = await Master.find(req.query);
+            let query = req.query;
+            const taxGroup = await taxgroup.find(query);
+            const master = await Master.find(query);
             // const servicegroup = await serviceGroup.find(req.query);
+
+             // Convert BigInt values to strings
+             if (query && query.taxGrpId && typeof query.taxGrpId === 'bigint') {
+                query.taxGrpId = query.taxGrpId.toString();
+            }
 
             const result = taxGroup.map(sObject => {
                 const storeKeys = ['status', 'taxgrouptype', 'taxgroupcode'];
@@ -2320,7 +2356,20 @@ app.get('/getTaxGroup', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: taxGroup });
+              // Custom serialization function to handle BigInt values
+              const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: taxGroup });
+            res.send(serializedDocuments);
+            // res.json({ data: taxGroup });
         }
         else {
             console.log('GET')
@@ -2336,7 +2385,38 @@ app.get('/getTaxGroup', async (req, res) => {
     }
 })
 app.post('/insertTaxSubGroup', async (req, res) => {
-    onCommonPost(req, res, taxSubGroup)
+    // onCommonPost(req, res, taxSubGroup)
+    try {
+        if (req.body[0].taxSubGrpId != 0) {
+            console.log('3')
+            req.body[0].modifydt = new Date();
+            await taxSubGroup.updateOne({ taxSubGrpId: { $eq: req.body[0].taxSubGrpId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            console.log('Stock')
+            const componentId = 'Add Item Category';
+            const result = await taxSubGroup.aggregate([
+                { $group: { _id: null, maxTaxSubGrpId: { $max: '$taxSubGrpId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxPoNumId)
+            let counter = (result[0] && result[0].maxTaxSubGrpId) ? result[0].maxTaxSubGrpId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].taxSubGrpId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            // req.body[0]['poNumber'] = `POCS0${counter}`;
+            await taxSubGroup.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+            console.log('req.body', req.body)
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
+    
 })
 app.get('/getTaxSubGroup', async (req, res) => {
     console.log('req', req)
@@ -2350,10 +2430,15 @@ app.get('/getTaxSubGroup', async (req, res) => {
         // const serviceGroup = require('./service.js').serviceGroup;
         console.log('req.query', req.query)
         if (req.query) {
-            const taxsubGroup = await taxsubgroup.find(req.query);
-            const taxGroup = await taxgroup.find(req.query);
-            const master = await Master.find(req.query);
-            // const servicegroup = await serviceGroup.find(req.query);
+            let query = req.query;
+            const taxsubGroup = await taxsubgroup.find(query);
+            const taxGroup = await taxgroup.find(query);
+            const master = await Master.find(query);
+
+               // Convert BigInt values to strings
+               if (query && query.taxSubGrpId && typeof query.taxSubGrpId === 'bigint') {
+                query.taxSubGrpId = query.taxSubGrpId.toString();
+            }
 
             const result = taxsubGroup.map(sObject => {
                 const storeKeys = ['taxgroup', 'status'];
@@ -2375,7 +2460,21 @@ app.get('/getTaxSubGroup', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: taxsubGroup });
+
+               // Custom serialization function to handle BigInt values
+               const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: taxsubGroup });
+            res.send(serializedDocuments);
+            // res.json({ data: taxsubGroup });
         }
         else {
             console.log('GET')

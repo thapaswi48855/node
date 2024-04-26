@@ -2021,7 +2021,9 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const matchStore = storeMaster.find(obj => obj._id.toString() === sObject['store'].toString());
+                    console.log('storeMaster', storeMaster);
+                    console.log('sObject', sObject)
+                    const matchStore = storeMaster.find(obj => obj._id === sObject['store']);
                     if (matchStore) {
                         sObject['store'] = matchStore.store;
                     }

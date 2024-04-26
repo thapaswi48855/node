@@ -1960,7 +1960,7 @@ app.post('/insertRasiePurchaseOrderMaster', async (req, res) => {
     // }
     try {
         console.log('1')
-        console.log('req.body[0].poNumId',req.body[0].poNumId)
+        console.log('req.body[0].poNumId', req.body[0].poNumId)
         if (req.body[0].poNumId != 0) {
             console.log('3')
             req.body[0].modifydt = new Date();
@@ -1984,7 +1984,7 @@ app.post('/insertRasiePurchaseOrderMaster', async (req, res) => {
             req.body[0]['poNumber'] = `POCS0${counter}`;
             await rasiePurchaseOrder.insertMany(req.body);
             res.json({ status: "200", message: 'Create Successfull' });
-            console.log('req.body',req.body)
+            console.log('req.body', req.body)
         }
     } catch (error) {
         console.log('Update Error')
@@ -1999,22 +1999,18 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
         const RasiePurchaseOrder = require('./procurement.js').rasiePurchaseOrder;
         const Master = require('./masters.js').master;
         const StoreMaster = require('./store.js').storeMaster;
-        console.log('req.query', req.query)
 
-        // if (req.query) {
-        //     console.log('GET1')
-        //     const rasiePurchaseOrder = await RasiePurchaseOrder.find(req.query);
-        //     res.json({ data: rasiePurchaseOrder });
-        // } else {
-        //     console.log('GET')
-        //     const rasiePurchaseOrder = await RasiePurchaseOrder.find();
-        //     res.json({ data: rasiePurchaseOrder });
-        // }
         if (req.query) {
-            const rasiePurchaseOrder = await RasiePurchaseOrder.find(req.query);
-            const master = await Master.find(req.query);
-            const storeMaster = await StoreMaster.find(req.query);
+            let query = req.query;
+            const rasiePurchaseOrder = await RasiePurchaseOrder.find(query);
+            const master = await Master.find(query);
+            const storeMaster = await StoreMaster.find(query);
             // const storeKeys = ['supplierapplyTCSforPOStockEntry', 'status', 'registeredsupplier', 'supplierCategory'];
+
+            // Convert BigInt values to strings
+            if (query && query.poNumId && typeof query.poNumId === 'bigint') {
+                query.poNumId = query.poNumId.toString();
+            }
 
             const result = rasiePurchaseOrder.map(sObject => {
                 const storeKeys = ['store', 'approvalStatus'];
@@ -2035,7 +2031,20 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: rasiePurchaseOrder });
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: rasiePurchaseOrder });
+            res.send(serializedDocuments);
+            // res.json({ data: rasiePurchaseOrder });
         }
         else {
             console.log('GET')

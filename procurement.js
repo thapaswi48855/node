@@ -6,6 +6,7 @@ const rasiePurchaseOrderSchema = new mongoose.Schema({
     supplierAdderss: String,
     poallowedTo: String,
     poDate: String,
+    poNumber:String,
     enquiryNo: String,
     enuiryDate: String,
     quotationNo: String,

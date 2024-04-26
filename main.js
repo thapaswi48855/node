@@ -2023,7 +2023,7 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
                     }, null);
                     console.log('storeMaster', storeMaster);
                     console.log('sObject', sObject)
-                    const matchStore = storeMaster.find(obj => obj._id === sObject['store']);
+                    const matchStore = storeMaster.find(obj => obj.store === sObject['store']);
                     if (matchStore) {
                         sObject['store'] = matchStore.store;
                     }
@@ -2062,54 +2062,40 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
 })
 
 app.post('/insertStockEntryMaster', async (req, res) => {
-    onCommonPost(req, res, stockEntry)
-    // try {
-    //     console.log('req.body', req.body)
-    //     if (req.body[0] && req.body[0]._id) {
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         req.body[0].modifydt = new Date();
-    //         await stockEntry.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //         res.json({ status: "200", message: 'Update Successfull' });
-    //     } else {
-    //         const currentdt = new Date();
-    //         req.body[0].createdt = currentdt;
-    //         await stockEntry.insertMany(req.body);
-    //         console.log('req.body Insert', req.body)
-    //         res.json({ status: "200", message: 'Create Successfull' });
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
-    // }
+    try {
+
+        if (req.body[0].stockEntryId != 0) {
+            console.log('3')
+            req.body[0].modifydt = new Date();
+            await rasiePurchaseOrder.updateOne({ stockEntryId: { $eq: req.body[0].stockEntryId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            console.log('2')
+            const componentId = 'Add Item Category';
+            const result = await rasiePurchaseOrder.aggregate([
+                { $group: { _id: null, maxStockEntryId: { $max: '$stockEntryId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxPoNumId)
+            let counter = (result[0] && result[0].maxStockEntryId) ? result[0].maxStockEntryId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].stockEntryId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            // req.body[0]['poNumber'] = `POCS0${counter}`;
+            await rasiePurchaseOrder.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+            console.log('req.body', req.body)
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
-app.get('/getStockEntryMaster', async (req, res) => {
-    console.log('Get 1')
-    // try {
-    //     // Assuming you have a "Teacher" model defined in your './model.js' file
-    //     const StockEntry = require('./procurement.js').stockEntry;
-    //     // onCommonGet(req, res, StockEntry)
-    //     // StockEntry
-    //     // console.log('req.query', req.query)
-
-    //     // if (req.query) {
-    //     //     console.log('GET1')
-    //     //     const stockEntry = await StockEntry.find(req.query);
-    //     //     res.json({ data: stockEntry });
-    //     // } else {
-    //     //     console.log('GET')
-    //     //     const stockEntry = await StockEntry.find();
-    //     //     res.json({ data: stockEntry });
-    //     // }
-
-    // } catch (error) {
-    //     // Handle any errors that may occur during the database query
-    //     console.error(error);
-    //     res.status(500).json({ error: 'Internal Server Error' });
-    // }
+app.get('/getStockEntryMaster', async (req, res) => {  
     try {
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const StockEntry = require('./procurement.js').stockEntry;
@@ -2118,11 +2104,17 @@ app.get('/getStockEntryMaster', async (req, res) => {
         const rasiePurchase = require('./procurement.js').rasiePurchaseOrder;
 
         if (req.query) {
-            const stockEntry = await StockEntry.find(req.query);
-            const master = await Master.find(req.query);
-            const storeMaster = await StoreMaster.find(req.query);
-            const rasiepurchase = await rasiePurchase.find(req.query);
+            let query = req.query;
+            const stockEntry = await StockEntry.find(query);
+            const master = await Master.find(query);
+            const storeMaster = await StoreMaster.find(query);
+            const rasiepurchase = await rasiePurchase.find(query);
             // const storeKeys = ['supplierapplyTCSforPOStockEntry', 'status', 'registeredsupplier', 'supplierCategory'];
+
+             // Convert BigInt values to strings
+             if (query && query.stockEntryId && typeof query.stockEntryId === 'bigint') {
+                query.stockEntryId = query.stockEntryId.toString();
+            }
 
             const result = stockEntry.map(sObject => {
                 const storeKeys = ['store', 'poNumber', 'approvalStatus'];
@@ -2133,9 +2125,9 @@ app.get('/getStockEntryMaster', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    const matchStore = storeMaster.find(obj => obj._id.toString() === sObject['store'].toString());
+                    const matchStore = storeMaster.find(obj => obj.store === sObject['store']);
                     console.log('sObject', rasiepurchase)
-                    const matchpurchase = rasiepurchase.find(obj => obj._id === sObject['ponumber']);
+                    const matchpurchase = rasiepurchase.find(obj => obj.poNumber === sObject['ponumber']);
                     if (matchStore) {
                         sObject['store'] = matchStore.store;
                     }
@@ -2149,7 +2141,20 @@ app.get('/getStockEntryMaster', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: stockEntry });
+             // Custom serialization function to handle BigInt values
+             const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: stockEntry });
+            res.send(serializedDocuments);
+            // res.json({ data: stockEntry });
         }
         else {
             console.log('GET')

@@ -39,6 +39,7 @@ const rasiePurchaseOrderSchema = new mongoose.Schema({
 })
 
 const stockEntrySchema =new mongoose.Schema({
+    stockEntryId:BigInt,
     store: String,
     ponumber: String,
     quantityUom: String,

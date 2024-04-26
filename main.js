@@ -2021,8 +2021,7 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    console.log('storeMaster', storeMaster);
-                    console.log('sObject', sObject)
+                    
                     const matchStore = storeMaster.find(obj => obj.store === sObject['store']);
                     if (matchStore) {
                         sObject['store'] = matchStore.store;
@@ -2072,7 +2071,7 @@ app.post('/insertStockEntryMaster', async (req, res) => {
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
-            console.log('2')
+            console.log('Stock')
             const componentId = 'Add Item Category';
             const result = await rasiePurchaseOrder.aggregate([
                 { $group: { _id: null, maxStockEntryId: { $max: '$stockEntryId' } } }
@@ -2126,7 +2125,7 @@ app.get('/getStockEntryMaster', async (req, res) => {
                         return found || subMatchingObject;
                     }, null);
                     const matchStore = storeMaster.find(obj => obj.store === sObject['store']);
-                    console.log('sObject', rasiepurchase)
+                  
                     const matchpurchase = rasiepurchase.find(obj => obj.poNumber === sObject['ponumber']);
                     if (matchStore) {
                         sObject['store'] = matchStore.store;

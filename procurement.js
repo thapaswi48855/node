@@ -62,7 +62,7 @@ const stockEntrySchema =new mongoose.Schema({
     meansTransport: String,
     consignmentNo: String,
     consignmentDate: String,
-    seletedItemList:Array,
+    seletedItemLists:Array,
     totalItemSchDiscount: String,  
     cgst: String,
     sgst: String,

@@ -2066,14 +2066,14 @@ app.post('/insertStockEntryMaster', async (req, res) => {
         if (req.body[0].stockEntryId != 0) {
             console.log('3')
             req.body[0].modifydt = new Date();
-            await rasiePurchaseOrder.updateOne({ stockEntryId: { $eq: req.body[0].stockEntryId } }, {
+            await stockEntry.updateOne({ stockEntryId: { $eq: req.body[0].stockEntryId } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
             console.log('Stock')
             const componentId = 'Add Item Category';
-            const result = await rasiePurchaseOrder.aggregate([
+            const result = await stockEntry.aggregate([
                 { $group: { _id: null, maxStockEntryId: { $max: '$stockEntryId' } } }
             ]).exec();
             console.log('genericClassificationId', result[0].maxPoNumId)
@@ -2084,7 +2084,7 @@ app.post('/insertStockEntryMaster', async (req, res) => {
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
             // req.body[0]['poNumber'] = `POCS0${counter}`;
-            await rasiePurchaseOrder.insertMany(req.body);
+            await stockEntry.insertMany(req.body);
             res.json({ status: "200", message: 'Create Successfull' });
             console.log('req.body', req.body)
         }

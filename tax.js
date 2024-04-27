@@ -4,6 +4,7 @@ const taxGroupSchema = new mongoose.Schema({
     taxGrpId:BigInt,
     taxgrouptype: String,
     taxgroup:String,
+    taxgrpcd:String,
     taxgroupcode: String,
     displayorder:String,
     status: String,   
@@ -16,6 +17,7 @@ const taxGroupSchema = new mongoose.Schema({
 const taxSubGroupSchema = new mongoose.Schema({
     taxSubGrpId:BigInt,
     taxgroup: String,
+    taxgrpcd:String,
     taxsubgroup:String,
     status: String,
     displayorder:String,

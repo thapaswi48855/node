@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const serviceGroupSchema = new mongoose.Schema({
+    serviceGrpId:BigInt,
     servicegroupname:String,
     displayorder:String,
     code:String,    
@@ -12,6 +13,7 @@ const serviceGroupSchema = new mongoose.Schema({
 })
 
 const serviceSubGroupSchema = new mongoose.Schema({
+    serviceSubGrpId:BigInt,
     servicegroupname:String,
     accounthead:String,
     servicesubgroupname:String,    

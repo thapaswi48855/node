@@ -230,6 +230,7 @@ const newItemSchema = new mongoose.Schema({
 })
 
 const departmentSchema =new mongoose.Schema({
+    departmentId:BigInt,
     department: String,
     departmentType: String,
     allowedGender: String,

@@ -2021,7 +2021,7 @@ app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
                         const subMatchingObject = subMaster.subMasterData.find(obj => obj.subMasterId === sObject[status]);
                         return found || subMatchingObject;
                     }, null);
-                    
+
                     const matchStore = storeMaster.find(obj => obj.store === sObject['store']);
                     if (matchStore) {
                         sObject['store'] = matchStore.store;
@@ -2094,7 +2094,7 @@ app.post('/insertStockEntryMaster', async (req, res) => {
     }
 })
 
-app.get('/getStockEntryMaster', async (req, res) => {  
+app.get('/getStockEntryMaster', async (req, res) => {
     try {
         // Assuming you have a "Teacher" model defined in your './model.js' file
         const StockEntry = require('./procurement.js').stockEntry;
@@ -2110,8 +2110,8 @@ app.get('/getStockEntryMaster', async (req, res) => {
             const rasiepurchase = await rasiePurchase.find(query);
             // const storeKeys = ['supplierapplyTCSforPOStockEntry', 'status', 'registeredsupplier', 'supplierCategory'];
 
-             // Convert BigInt values to strings
-             if (query && query.stockEntryId && typeof query.stockEntryId === 'bigint') {
+            // Convert BigInt values to strings
+            if (query && query.stockEntryId && typeof query.stockEntryId === 'bigint') {
                 query.stockEntryId = query.stockEntryId.toString();
             }
 
@@ -2125,7 +2125,7 @@ app.get('/getStockEntryMaster', async (req, res) => {
                         return found || subMatchingObject;
                     }, null);
                     const matchStore = storeMaster.find(obj => obj.store === sObject['store']);
-                  
+
                     const matchpurchase = rasiepurchase.find(obj => obj.poNumber === sObject['ponumber']);
                     if (matchStore) {
                         sObject['store'] = matchStore.store;
@@ -2140,8 +2140,8 @@ app.get('/getStockEntryMaster', async (req, res) => {
                 });
                 return sObject;
             });
-             // Custom serialization function to handle BigInt values
-             const serialize = (data) => {
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
                 return JSON.stringify(data, (key, value) => {
                     if (typeof value === 'bigint') {
                         return value.toString();
@@ -2185,7 +2185,37 @@ app.post('/insertPatientReturnIndentMaster', async (req, res) => {
 //Service serviceSubGroup
 
 app.post('/insertServiceGroupMaster', async (req, res) => {
-    onCommonPost(req, res, serviceGroup)
+    // onCommonPost(req, res, serviceGroup)
+    try {
+        if (req.body[0].serviceGrpId != 0) {
+            console.log('3')
+            req.body[0].modifydt = new Date();
+            await serviceGroup.updateOne({ serviceGrpId: { $eq: req.body[0].serviceGrpId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            console.log('Stock')
+            const componentId = 'Add Item Category';
+            const result = await serviceGroup.aggregate([
+                { $group: { _id: null, maxServiceGrpId: { $max: '$serviceGrpId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxPoNumId)
+            let counter = (result[0] && result[0].maxServiceGrpId) ? result[0].maxServiceGrpId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].serviceGrpId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            // req.body[0]['poNumber'] = `POCS0${counter}`;
+            await serviceGroup.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+            console.log('req.body', req.body)
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 app.get('/getServiceGroupMaster', async (req, res) => {
     console.log('Get 1')
@@ -2198,8 +2228,15 @@ app.get('/getServiceGroupMaster', async (req, res) => {
         const Master = require('./masters.js').master;
 
         if (req.query) {
-            const servicegroup = await serviceGroup.find(req.query);
-            const master = await Master.find(req.query);
+            let query = req.query;
+            const servicegroup = await serviceGroup.find(query);
+            const master = await Master.find(query);
+
+            // Convert BigInt values to strings
+            if (query && query.serviceGrpId && typeof query.serviceGrpId === 'bigint') {
+                query.serviceGrpId = query.serviceGrpId.toString();
+            }
+
 
             const result = servicegroup.map(sObject => {
                 const storeKeys = ['status'];
@@ -2217,7 +2254,20 @@ app.get('/getServiceGroupMaster', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: servicegroup });
+
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: servicegroup });
+            res.send(serializedDocuments);
+            // res.json({ data: servicegroup });
         }
         else {
             console.log('GET')
@@ -2231,7 +2281,37 @@ app.get('/getServiceGroupMaster', async (req, res) => {
     }
 })
 app.post('/insertServiceSubGroupMaster', async (req, res) => {
-    onCommonPost(req, res, serviceSubGroup)
+    // onCommonPost(req, res, serviceSubGroup)
+    try {
+        if (req.body[0].serviceSubGrpId != 0) {
+            console.log('3')
+            req.body[0].modifydt = new Date();
+            await serviceSubGroup.updateOne({ serviceSubGrpId: { $eq: req.body[0].serviceSubGrpId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            console.log('Stock')
+            const componentId = 'Add Item Category';
+            const result = await serviceSubGroup.aggregate([
+                { $group: { _id: null, maxServiceSubGrpId: { $max: '$serviceSubGrpId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxPoNumId)
+            let counter = (result[0] && result[0].maxServiceSubGrpId) ? result[0].maxServiceSubGrpId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].serviceSubGrpId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            // req.body[0]['poNumber'] = `POCS0${counter}`;
+            await serviceSubGroup.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+            console.log('req.body', req.body)
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 app.get('/getServiceSubGroupMaster', async (req, res) => {
     console.log('Get 1')
@@ -2243,9 +2323,15 @@ app.get('/getServiceSubGroupMaster', async (req, res) => {
         const Master = require('./masters.js').master;
         const serviceGroup = require('./service.js').serviceGroup;
         if (req.query) {
+            let query = req.query;
             const serviceSubGroup = await serviceSubGrp.find(req.query);
             const master = await Master.find(req.query);
             const servicegroup = await serviceGroup.find(req.query);
+
+            // Convert BigInt values to strings
+            if (query && query.serviceSubGrpId && typeof query.serviceSubGrpId === 'bigint') {
+                query.serviceSubGrpId = query.serviceSubGrpId.toString();
+            }
 
             const result = serviceSubGroup.map(sObject => {
                 const storeKeys = ['status', 'accounthead', 'servicegroupname'];
@@ -2267,7 +2353,19 @@ app.get('/getServiceSubGroupMaster', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: serviceSubGroup });
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: serviceSubGroup });
+            res.send(serializedDocuments);
+            // res.json({ data: serviceSubGroup });
         }
         else {
             console.log('GET')
@@ -2331,8 +2429,8 @@ app.get('/getTaxGroup', async (req, res) => {
             const master = await Master.find(query);
             // const servicegroup = await serviceGroup.find(req.query);
 
-             // Convert BigInt values to strings
-             if (query && query.taxGrpId && typeof query.taxGrpId === 'bigint') {
+            // Convert BigInt values to strings
+            if (query && query.taxGrpId && typeof query.taxGrpId === 'bigint') {
                 query.taxGrpId = query.taxGrpId.toString();
             }
 
@@ -2356,8 +2454,8 @@ app.get('/getTaxGroup', async (req, res) => {
                 });
                 return sObject;
             });
-              // Custom serialization function to handle BigInt values
-              const serialize = (data) => {
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
                 return JSON.stringify(data, (key, value) => {
                     if (typeof value === 'bigint') {
                         return value.toString();
@@ -2416,7 +2514,7 @@ app.post('/insertTaxSubGroup', async (req, res) => {
         console.log('Update Error')
         res.status(500).json({ status: "500", message: 'Error', error: error.message });
     }
-    
+
 })
 app.get('/getTaxSubGroup', async (req, res) => {
     console.log('req', req)
@@ -2435,8 +2533,8 @@ app.get('/getTaxSubGroup', async (req, res) => {
             const taxGroup = await taxgroup.find(query);
             const master = await Master.find(query);
 
-               // Convert BigInt values to strings
-               if (query && query.taxSubGrpId && typeof query.taxSubGrpId === 'bigint') {
+            // Convert BigInt values to strings
+            if (query && query.taxSubGrpId && typeof query.taxSubGrpId === 'bigint') {
                 query.taxSubGrpId = query.taxSubGrpId.toString();
             }
 
@@ -2461,8 +2559,8 @@ app.get('/getTaxSubGroup', async (req, res) => {
                 return sObject;
             });
 
-               // Custom serialization function to handle BigInt values
-               const serialize = (data) => {
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
                 return JSON.stringify(data, (key, value) => {
                     if (typeof value === 'bigint') {
                         return value.toString();
@@ -2491,7 +2589,37 @@ app.get('/getTaxSubGroup', async (req, res) => {
 })//department
 
 app.post('/insertDepartment', async (req, res) => {
-    onCommonPost(req, res, department)
+    // onCommonPost(req, res, department)
+    try {
+        if (req.body[0].departmentId != 0) {
+            console.log('3')
+            req.body[0].modifydt = new Date();
+            await department.updateOne({ departmentId: { $eq: req.body[0].departmentId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            console.log('Stock')
+            const componentId = 'Add Item Category';
+            const result = await department.aggregate([
+                { $group: { _id: null, maxDepartmentId: { $max: '$departmentId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxPoNumId)
+            let counter = (result[0] && result[0].maxDepartmentId) ? result[0].maxDepartmentId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].departmentId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            // req.body[0]['poNumber'] = `POCS0${counter}`;
+            await department.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+            console.log('req.body', req.body)
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 app.get('/getDepartment', async (req, res) => {
     try {
@@ -2504,11 +2632,17 @@ app.get('/getDepartment', async (req, res) => {
         // const rasiePurchase = require('./procurement.js').rasiePurchaseOrder;
 
         if (req.query) {
-            const department = await Department.find(req.query);
-            const master = await Master.find(req.query);
+            let query = req.query;
+            const department = await Department.find(query);
+            const master = await Master.find(query);
             // const storeMaster = await StoreMaster.find(req.query);
             // const rasiepurchase = await rasiePurchase.find(req.query);
             // const storeKeys = ['supplierapplyTCSforPOStockEntry', 'status', 'registeredsupplier', 'supplierCategory'];
+
+            // Convert BigInt values to strings
+            if (query && query.departmentId && typeof query.departmentId === 'bigint') {
+                query.departmentId = query.departmentId.toString();
+            }
 
             const result = department.map(sObject => {
                 const storeKeys = ['status', 'departmentType', 'allowedGender', 'referralDoctorAsOrderingClinician'];
@@ -2535,7 +2669,20 @@ app.get('/getDepartment', async (req, res) => {
                 });
                 return sObject;
             });
-            res.json({ data: department });
+            // Custom serialization function to handle BigInt values
+            const serialize = (data) => {
+                return JSON.stringify(data, (key, value) => {
+                    if (typeof value === 'bigint') {
+                        return value.toString();
+                    }
+                    return value;
+                });
+            };
+
+            // Serialize the response data
+            const serializedDocuments = serialize({ data: department });
+            res.send(serializedDocuments);
+            // res.json({ data: department });
         }
         else {
             console.log('GET')

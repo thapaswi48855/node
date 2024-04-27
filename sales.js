@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const salesSchema = new mongoose.Schema({
-    
+    salesId:BigInt,
     patientType:String,
     date: String,
     store: String,

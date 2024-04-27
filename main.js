@@ -2168,8 +2168,38 @@ app.get('/getStockEntryMaster', async (req, res) => {
 })
 
 app.post('/insertSalesMaster', async (req, res) => {
-    onCommonPost(req, res, sales)
-    console.log('common')
+    // onCommonPost(req, res, sales)
+    // console.log('common')
+    try {
+        if (req.body[0].salesId != 0) {
+            console.log('3')
+            req.body[0].modifydt = new Date();
+            await sales.updateOne({ salesId: { $eq: req.body[0].salesId } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            console.log('Stock')
+            const componentId = 'Add Item Category';
+            const result = await sales.aggregate([
+                { $group: { _id: null, maxSalesId: { $max: '$salesId' } } }
+            ]).exec();
+            console.log('genericClassificationId', result[0].maxPoNumId)
+            let counter = (result[0] && result[0].maxSalesId) ? result[0].maxSalesId + 1 : 1;
+            console.log('genericClassification', counter)
+            // counters.set(componentId, counter);
+            req.body[0].salesId = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            // req.body[0]['poNumber'] = `POCS0${counter}`;
+            await sales.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+            console.log('req.body', req.body)
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
 })
 
 app.post('/insertSalesReturnMaster', async (req, res) => {

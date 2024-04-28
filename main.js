@@ -1936,30 +1936,9 @@ app.get('/getNewItem', async (req, res) => {
 // ****************             Purchase Order           *****************//
 
 app.post('/insertRasiePurchaseOrderMaster', async (req, res) => {
-    // onCommonPost(req, res, rasiePurchaseOrder)
-    // try {
-    //     if (req.body[0] && req.body[0]._id) {
-    //         const id = req.body[0]._id
-    //         delete req.body[0]._id
-    //         req.body[0].modifydt = new Date();
-    //         await rasiePurchaseOrder.updateOne({ _id: { $eq: id } }, {
-    //             $set: req.body[0]
-    //         });
-    //         res.json({ status: "200", message: 'Update Successfull' });
-    //     } else {
-    //         const currentdt = new Date();
-    //         req.body[0].createdt = currentdt;
-    //         req.body[0]['poNumber'] = "POCS02";
-    //         console.log('req.body', req.body)
-    //         await rasiePurchaseOrder.insertMany(req.body);
-    //         res.json({ status: "200", message: 'Create Successfull' });
-    //     }
-    // } catch (error) {
-    //     console.log('Update Error')
-    //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
-    // }
+    console.log('1')
     try {
-        console.log('1')
+      
         console.log('req.body[0].poNumId', req.body[0].poNumId)
         if (req.body[0].poNumId != 0) {
             console.log('3')

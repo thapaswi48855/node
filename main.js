@@ -1954,8 +1954,23 @@ app.post('/insertRasiePurchaseOrderMaster', async (req, res) => {
                 { $group: { _id: null, maxPoNumId: { $max: '$poNumId' } } }
             ]).exec();
             console.log('genericClassificationId', result[0].maxPoNumId)
-            let counter = (result[0] && result[0].maxPoNumId) ? result[0].maxPoNumId + 1 : 1;
+            // let counter = (result[0] && result[0].maxPoNumId) ? result[0].maxPoNumId + 1 : 1;
             console.log('genericClassification', counter)
+
+            if (result.length > 0) {
+                console.log('genericClassificationId', result[0].maxPoNumId)
+                let counter = (result[0].maxPoNumId) ? result[0].maxPoNumId + 1 : 1;
+                console.log('genericClassification', counter)
+                // counters.set(componentId, counter);
+                req.body[0].poNumId = counter
+            } else {
+                console.log('No existing documents, setting counter to 1')
+                req.body[0].poNumId = 1;
+            }
+
+
+
+
             // counters.set(componentId, counter);
             req.body[0].poNumId = counter
             const currentdt = new Date();

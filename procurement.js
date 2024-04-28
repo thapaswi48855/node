@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const rasiePurchaseOrderSchema = new mongoose.Schema({
     poNumId:BigInt,
+    store:String,
+    department:String,
+    quantityUom:String,
     supplier: String,
     supplierAdderss: String,
     poallowedTo: String,
@@ -22,6 +25,10 @@ const rasiePurchaseOrderSchema = new mongoose.Schema({
     cgst: String,
     sgst: String,
     gst: String,
+    totalcgst: String,
+    toatalsgst: String,
+    tataltaxAmt: String,
+    totalItemDiscount: String,
     taxAmount: String,
     totalItemAmount: String,
     poDiscountType: String,

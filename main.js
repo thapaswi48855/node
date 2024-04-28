@@ -394,7 +394,7 @@ app.get('/getNewUsers', async (req, res) => {
 /***************    Store   ******************/
 
 app.post('/insertStoreTypeMaster', async (req, res) => {
-    onComonInsert(req, storeTypeMaster, storetypeid)
+    onComonInsert(req,res, storeTypeMaster, storetypeid)
 })
 
 app.get('/getStoreTypeMaster', async (req, res) => {
@@ -452,7 +452,7 @@ app.get('/getStoreTypeMaster', async (req, res) => {
 })
 
 app.post('/insertStoreMaster', async (req, res) => {
-    onComonInsert(req, storeMaster, storemasterid)
+    onComonInsert(req,res, storeMaster, storemasterid)
 })
 
 app.get('/getStoreMaster', async (req, res) => {
@@ -530,7 +530,7 @@ app.get('/getStoreMaster', async (req, res) => {
 })
 
 app.post('/insertUomCreation', async (req, res) => {
-    onComonInsert(req, uomCreation, uomCreationId)
+    onComonInsert(req,res, uomCreation, uomCreationId)
 })
 
 app.get('/getUomCreation', async (req, res) => {
@@ -615,7 +615,7 @@ app.get('/getUomCreation', async (req, res) => {
 })
 
 app.post('/insertAddItemCategory', async (req, res) => {
-    onComonInsert(req, addItemCategory, addcategoryid)
+    onComonInsert(req,res, addItemCategory, addcategoryid)
 })
 
 app.get('/getAddItemCategory', async (req, res) => {
@@ -684,7 +684,7 @@ app.get('/getAddItemCategory', async (req, res) => {
 })
 
 app.post('/insertGenericClassificationDetails', async (req, res) => {
-    onComonInsert(req, genericClassification, genericClassificationId)
+    onComonInsert(req, res ,genericClassification, genericClassificationId)
 })
 
 app.get('/getGenericClassificationDetails', async (req, res) => {
@@ -751,7 +751,7 @@ app.get('/getGenericClassificationDetails', async (req, res) => {
 })
 
 app.post('/insertGenericSubClassificationDetails', async (req, res) => {
-    onComonInsert(req, genericSubClassification, genSubClasiId)
+    onComonInsert(req,res, genericSubClassification, genSubClasiId)
 })
 
 app.get('/getGenericSubClassificationDetails', async (req, res) => {
@@ -824,7 +824,7 @@ app.get('/getGenericSubClassificationDetails', async (req, res) => {
 });
 
 app.post('/insertGenericDetails', async (req, res) => {
-    onComonInsert(req, genericDetails, generDetId)
+    onComonInsert(req,res, genericDetails, generDetId)
 })
 
 
@@ -926,7 +926,7 @@ app.get('/getGenericDetails', async (req, res) => {
 
 
 app.post('/insertSupplierCategory', async (req, res) => {
-    onComonInsert(req, supplierCategory, supplierCatId)
+    onComonInsert(req,res, supplierCategory, supplierCatId)
 })
 
 app.get('/getSupplierCategory', async (req, res) => {
@@ -989,7 +989,7 @@ app.get('/getSupplierCategory', async (req, res) => {
 })
 
 app.post('/insertManufacureCreation', async (req, res) => {
-    onComonInsert(req, manufacureCreation, manufacureId)
+    onComonInsert(req,res, manufacureCreation, manufacureId)
 })
 
 app.get('/getManufacureCreation', async (req, res) => {
@@ -1051,7 +1051,7 @@ app.get('/getManufacureCreation', async (req, res) => {
 })
 
 app.post('/insertSupplierDetails', async (req, res) => {
-    onComonInsert(req, supplierDetails, supplierDetId)
+    onComonInsert(req,res, supplierDetails, supplierDetId)
 })
 
 app.get('/getSupplierDetails', async (req, res) => {
@@ -1195,31 +1195,31 @@ app.get('/zerolevelmaster', async (req, res) => {
 //newItem
 
 app.post('/insertNewItem', async (req, res) => {
-    // onComonInsert(req, newItem, newItemId);
+    onComonInsert(req, res,newItem, newItemId);
     console.log('newItemId',req)
-    try {
+    // try {
         
-        if (req.body[0].newItemId != 0) {
-            req.body[0].modifydt = new Date();
-            await newItem.updateOne({ newItemId: { $eq: req.body[0].newItemId } }, {
-                $set: req.body[0]
-            });
-            res.json({ status: "200", message: 'Update Successfull' });
-        } else {
-            const result = await newItem.aggregate([
-                { $group: { _id: null, maxId: { $max: '$newItemId' } } }
-            ]).exec();
-            let counter = (result[0] && result[0].maxId) ? result[0].maxId + 1 : 1;
-            req.body[0].newItemId = counter
-            const currentdt = new Date();
-            req.body[0].createdt = currentdt;
-            await newItem.insertMany(req.body);
-            res.json({ status: "200", message: 'Create Successfull' });
-        }
-    } catch (error) {
-        console.log('Update Error')
-        res.status(500).json({ status: "500", message: 'Error', error: error.message });
-    }
+    //     if (req.body[0].newItemId != 0) {
+    //         req.body[0].modifydt = new Date();
+    //         await newItem.updateOne({ newItemId: { $eq: req.body[0].newItemId } }, {
+    //             $set: req.body[0]
+    //         });
+    //         res.json({ status: "200", message: 'Update Successfull' });
+    //     } else {
+    //         const result = await newItem.aggregate([
+    //             { $group: { _id: null, maxId: { $max: '$newItemId' } } }
+    //         ]).exec();
+    //         let counter = (result[0] && result[0].maxId) ? result[0].maxId + 1 : 1;
+    //         req.body[0].newItemId = counter
+    //         const currentdt = new Date();
+    //         req.body[0].createdt = currentdt;
+    //         await newItem.insertMany(req.body);
+    //         res.json({ status: "200", message: 'Create Successfull' });
+    //     }
+    // } catch (error) {
+    //     console.log('Update Error')
+    //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    // }
 })
 
 app.get('/getNewItem', async (req, res) => {
@@ -1319,7 +1319,7 @@ app.get('/getNewItem', async (req, res) => {
 // ****************             Purchase Order           *****************//
 
 app.post('/insertRasiePurchaseOrderMaster', async (req, res) => {
-    onComonInsert(req, rasiePurchaseOrder, poNumId);
+    onComonInsert(req,res, rasiePurchaseOrder, poNumId);
 })
 
 app.get('/getRasiePurchaseOrderMaster', async (req, res) => {
@@ -1545,7 +1545,7 @@ app.post('/insertPatientReturnIndentMaster', async (req, res) => {
 //Service serviceSubGroup
 
 app.post('/insertServiceGroupMaster', async (req, res) => {
-    onComonInsert(req, serviceGroup, serviceGrpId)
+    onComonInsert(req, res,serviceGroup, serviceGrpId)
 })
 app.get('/getServiceGroupMaster', async (req, res) => {
     console.log('Get 1')
@@ -1611,7 +1611,7 @@ app.get('/getServiceGroupMaster', async (req, res) => {
     }
 })
 app.post('/insertServiceSubGroupMaster', async (req, res) => {
-    onComonInsert(req, serviceSubGroup, serviceSubGrpId)
+    onComonInsert(req, res,serviceSubGroup, serviceSubGrpId)
 })
 app.get('/getServiceSubGroupMaster', async (req, res) => {
     console.log('Get 1')
@@ -1682,7 +1682,7 @@ app.get('/getServiceSubGroupMaster', async (req, res) => {
 
 // Tax  
 app.post('/insertTaxGroup', async (req, res) => {
-    onComonInsert(req, taxGroup, taxGrpId)
+    onComonInsert(req, res,taxGroup, taxGrpId)
 })
 app.get('/getTaxGroup', async (req, res) => {
     console.log('Get 1')
@@ -1753,7 +1753,7 @@ app.get('/getTaxGroup', async (req, res) => {
     }
 })
 app.post('/insertTaxSubGroup', async (req, res) => {
-    onComonInsert(req, taxSubGroup, taxSubGrpId)
+    onComonInsert(req,res, taxSubGroup, taxSubGrpId)
 })
 app.get('/getTaxSubGroup', async (req, res) => {
     console.log('req', req)
@@ -1828,7 +1828,7 @@ app.get('/getTaxSubGroup', async (req, res) => {
 })//department
 
 app.post('/insertDepartment', async (req, res) => {
-    onComonInsert(req, department, departmentId)
+    onComonInsert(req,res, department, departmentId)
 })
 app.get('/getDepartment', async (req, res) => {
     try {
@@ -1904,8 +1904,8 @@ app.get('/getDepartment', async (req, res) => {
     }
 })
 
-async function onComonInsert(req, table_name, table_auto_id) {
-   
+async function onComonInsert(req, res,table_name, table_auto_id) {
+    console.log('table_auto_id', table_auto_id)
     try {
         console.log('table_auto_id', table_auto_id)
         if (req.body[0].table_auto_id != 0) {

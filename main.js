@@ -1811,7 +1811,9 @@ app.get('/zerolevelmaster', async (req, res) => {
 
 app.post('/insertNewItem', async (req, res) => {
     // onCommonPost(req, res, newItem)
-    onComonInsert(req,newItem,newItemId);
+    console.log('1')
+    await onComonInsert(req,newItem,newItemId);
+    console.log('2')
     // try {
     //     if (req.body[0].newItemId != 0) {
     //         req.body[0].modifydt = new Date();
@@ -3327,22 +3329,24 @@ async function onGeneratePdfCretor() {
 // app.listen(1000, () => console.log('ok'));
 
 async function onComonInsert(req, table_name,table_auto_id){
+    console.log('3')
     try {
+        console.log('table_auto_id',table_auto_id)
         if (req.body[0].table_auto_id != 0) {
             req.body[0].modifydt = new Date();
-            await newItem.updateOne({ table_auto_id: { $eq: req.body[0].table_auto_id } }, {
+            await table_name.updateOne({ table_auto_id: { $eq: req.body[0].table_auto_id } }, {
                 $set: req.body[0]
             });
             res.json({ status: "200", message: 'Update Successfull' });
         } else {
-            const result = await newItem.aggregate([
+            const result = await table_name.aggregate([
                 { $group: { _id: null, maxId: { $max: '$table_auto_id' } } }
             ]).exec();
             let counter = (result[0] && result[0].maxId) ? result[0].maxId + 1 : 1;
             req.body[0].table_auto_id = counter
             const currentdt = new Date();
             req.body[0].createdt = currentdt;
-            await newItem.insertMany(req.body);
+            await table_name.insertMany(req.body);
             res.json({ status: "200", message: 'Create Successfull' });
         }
     } catch (error) {
@@ -3352,5 +3356,5 @@ async function onComonInsert(req, table_name,table_auto_id){
  }
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`Example app listening  port ${port}`)
 })

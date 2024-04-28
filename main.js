@@ -1811,32 +1811,33 @@ app.get('/zerolevelmaster', async (req, res) => {
 
 app.post('/insertNewItem', async (req, res) => {
     // onCommonPost(req, res, newItem)
-    try {
-        if (req.body[0].newItemId != 0) {
-            req.body[0].modifydt = new Date();
-            await newItem.updateOne({ newItemId: { $eq: req.body[0].newItemId } }, {
-                $set: req.body[0]
-            });
-            res.json({ status: "200", message: 'Update Successfull' });
-        } else {
-            const componentId = 'Add Item Category';
-            const result = await newItem.aggregate([
-                { $group: { _id: null, maxNewItemId: { $max: '$newItemId' } } }
-            ]).exec();
-            console.log('genericClassificationId', result[0].maxUomCreationId)
-            let counter = (result[0] && result[0].maxNewItemId) ? result[0].maxNewItemId + 1 : 1;
-            console.log('genericClassification', counter)
-            // counters.set(componentId, counter);
-            req.body[0].newItemId = counter
-            const currentdt = new Date();
-            req.body[0].createdt = currentdt;
-            await newItem.insertMany(req.body);
-            res.json({ status: "200", message: 'Create Successfull' });
-        }
-    } catch (error) {
-        console.log('Update Error')
-        res.status(500).json({ status: "500", message: 'Error', error: error.message });
-    }
+    onComonInsert(req,newItem,newItemId);
+    // try {
+    //     if (req.body[0].newItemId != 0) {
+    //         req.body[0].modifydt = new Date();
+    //         await newItem.updateOne({ newItemId: { $eq: req.body[0].newItemId } }, {
+    //             $set: req.body[0]
+    //         });
+    //         res.json({ status: "200", message: 'Update Successfull' });
+    //     } else {
+    //         const componentId = 'Add Item Category';
+    //         const result = await newItem.aggregate([
+    //             { $group: { _id: null, maxNewItemId: { $max: '$newItemId' } } }
+    //         ]).exec();
+    //         console.log('genericClassificationId', result[0].maxUomCreationId)
+    //         let counter = (result[0] && result[0].maxNewItemId) ? result[0].maxNewItemId + 1 : 1;
+    //         console.log('genericClassification', counter)
+    //         // counters.set(componentId, counter);
+    //         req.body[0].newItemId = counter
+    //         const currentdt = new Date();
+    //         req.body[0].createdt = currentdt;
+    //         await newItem.insertMany(req.body);
+    //         res.json({ status: "200", message: 'Create Successfull' });
+    //     }
+    // } catch (error) {
+    //     console.log('Update Error')
+    //     res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    // }
 })
 
 app.get('/getNewItem', async (req, res) => {
@@ -3324,6 +3325,31 @@ async function onGeneratePdfCretor() {
 
 }
 // app.listen(1000, () => console.log('ok'));
+
+async function onComonInsert(req, table_name,table_auto_id){
+    try {
+        if (req.body[0].table_auto_id != 0) {
+            req.body[0].modifydt = new Date();
+            await newItem.updateOne({ table_auto_id: { $eq: req.body[0].table_auto_id } }, {
+                $set: req.body[0]
+            });
+            res.json({ status: "200", message: 'Update Successfull' });
+        } else {
+            const result = await newItem.aggregate([
+                { $group: { _id: null, maxId: { $max: '$table_auto_id' } } }
+            ]).exec();
+            let counter = (result[0] && result[0].maxId) ? result[0].maxId + 1 : 1;
+            req.body[0].table_auto_id = counter
+            const currentdt = new Date();
+            req.body[0].createdt = currentdt;
+            await newItem.insertMany(req.body);
+            res.json({ status: "200", message: 'Create Successfull' });
+        }
+    } catch (error) {
+        console.log('Update Error')
+        res.status(500).json({ status: "500", message: 'Error', error: error.message });
+    }
+ }
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
